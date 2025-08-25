@@ -1,0 +1,99 @@
+/*************************************************************************
+ * Your custom CSS file
+ *************************************************************************/
+
+.custom-dropdown {
+  width: 240px;
+}
+
+.custom-textbox {
+  width: 240px;
+}
+
+#dialog-1,
+#dialog-2,
+#dialog-3,
+#dialog-4,
+#share-dialog {
+  display: none;
+}
+
+#share-url {
+  width: 100%;
+  -webkit-touch-callout: default !important;
+  -webkit-user-select: text !important;
+  -khtml-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+#share-url-copy-prompt {
+  display: none;
+  color: #007bff;
+}
+
+/* scroll top */
+.scrollTop {
+  position: fixed;
+  bottom: -6rem;
+  right: 2rem;
+  padding: 10px 15px;
+  background-color: #333333;
+  opacity: 0.25;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.5s ease 0s;
+  z-index: 9999;
+}
+.scrollTop:hover {
+  box-sizing: border-box;
+  background-color: #333333;
+  color: #fff;
+  opacity: 0.5;
+}
+
+/* === Fix posisi hover hero1 === */
+
+.hero1 .container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mask-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mask-wrapper .hover-area {
+  pointer-events: auto;
+}
+
+.label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 500px) {
+  .hero-1 .judul {
+    position: fixed;
+    top: 6rem;
+    left: 0;
+    width: 93%;
+    /* padding: 10px 15px; */
+    /* background-color: #333333;
+  opacity: 0.5; */
+    color: #fff;
+    text-shadow: 2px 2px 4px #333333;
+
+    transition: all 0.5s ease 0s;
+    z-index: 1;
+    text-align: right;
+  }
+}
