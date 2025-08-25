@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Analisis Geospasial</title>
+    <meta
+      charset="utf-8"
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <link
+      href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+      media="screen"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="css/frame.css"
+      media="screen"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="css/controls.css"
+      media="screen"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="css/custom.css"
+      media="screen"
+      rel="stylesheet"
+      type="text/css"
+    />
+        <link
+      href="css/widgets.css"
+      media="screen"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:100,200,300,400,500,600,700"
+      rel="stylesheet"
+    />
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/footer.js"></script>
+  <script src="js/widgets.js"></script>
+    <script src="js/util.js"></script>
+     <script src="js/custom.js"></script>
+    <style>
+      .menu-index {
+        color: rgb(255, 255, 255) !important;
+        opacity: 1 !important;
+        font-weight: 700 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+
+
+    <div class="menu-container"></div>
+    <div class="content-container">
+      <!-------------------------------------------------------------------------------------------->
+      <!--Start Header-->
+      <section class="banner2" id="home">
+            <div class="banner-table2 flex-column">
+              <div class="flex-row">
+                <div class="flex-item flex-column">
+                  <h4 style="text-shadow: 2px 2px 4px #555555">
+                    Penilaian Risiko Deforestasi Dalam Rantai Pasokan Komoditas
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <div class="banner-table2 flex-column"   style="background-color: rgba(0, 0, 0, 0.5); align-self: flex-end;">
+              <div class="flex-row">
+                <div class="flex-item flex-column">
+                  <p class="text">
+                    Mengidentifikasi, Menilai, dan Memprioritaskan Risiko
+                    Deforestasi di Tiga Kecamatan (Bandar Negeri Semuong, Semaka &
+                    Wonosobo) Kabupaten Tanggamus, Provinsi Lampung
+                  </p>
+                </div>
+              </div>
+            </div>
+      </section>
+      <!--End Header-->
+      <!-------------------------------------------------------------------------------------------->
+      <div class="content">
+        <div class="content-table flex-column">
+          <!-------------------------------------------------------------------------------------------->
+          <!--Start Pendahuluan-->
+          <div class="flex-row">
+            <div class="flex-item flex-column" id="Background">
+              <iframe
+                class="iframe-in-body2"
+                src="https://rumah-petani.github.io/Map_Animasi/"
+                scrolling="no"
+              ></iframe>
+              <br />
+              <h2 id="text-only">Latar Belakang</h2>
+              <hr />
+              <p class="text">
+                Uni Eropa baru saja mengadopsi
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32023R1115&qid=1687867231461"
+                  >European Union Deforestation Regulation (EUDR)</a
+                >
+                untuk meminimalkan risiko deforestasi dan degradasi hutan dari
+                produk yang diperdagangkan di pasar tunggal Eropa. Regulasi ini
+                membawa dampak langsung bagi industri kopi di Lampung, terutama
+                Kabupaten Tanggamus yang memiliki peran strategis dalam
+                perekonomian daerah. Berdasarkan data
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href=" https://opendata.lampungprov.go.id/dataset/produksi-kopi-robusta-20192023"
+                  >Lampungprov.go.id</a
+                >, Tanggamus merupakan kabupaten dengan areal perkebunan kopi
+                terbesar kedua setelah Lampung Barat, dengan luas perkebunan
+                kopi mencapai 41.510 hektare, dan total produksi sekitar 168.308
+                ton dalam periode 2019 – 2023.
+              </p>
+
+              <br />
+              <p class="text">
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href=" https://www.instagram.com/asiamakmurofficial/"
+                  >PT. Asia Makmur</a
+                >
+                adalah salah satu perusahaan pengekspor berbasis di Lampung yang
+                berfokus pada pengolahan, perdagangan, dan ekspor biji kopi
+                hijau, khususnya Robusta. Perusahaan ini secara aktif membeli
+                pasokan dari perusahaan kopi menengah di Tanggamus, serta dari
+                wilayah penghasil kopi lainnya di Lampung dan Sumatera Selatan.
+                Dalam komitmennya terhadap keberlanjutan lingkungan, Asia Makmur
+                telah memperoleh
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href="https://www.4c-services.org/"
+                  >Sertifikasi 4C</a
+                >
+                dan memproses ±50 ribu ton kopi Robusta per tahun, dengan tujuan
+                pasar global termasuk ke Eropa yang meliputi beberapa negara
+                seperti Inggris, Belgia, Jerman, Rusia, Italia, Prancis dan
+                Georgia.
+              </p>
+              <iframe
+                class="iframe-in-body2"
+                src="https://rumah-petani.github.io/ekspor_am/"
+                scrolling="no"
+              ></iframe>
+              <p class="text-small-margin2">
+                Distribusi Ekspor Kopi Asia Makmur Tahun 2020<br />Sumber Data:
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href="https://trase.earth/explore/supply-chain/indonesia/coffee?chartType=sankey&year=2020&indicator=volume&dimension=exporter&dimension=country_of_destination&hideDomestic=false&exporter=ASIA+MAKMUR"
+                  >trase.earth</a
+                >
+              </p>
+              <br />
+              <p class="text">
+                Kabupaten Tanggamus memiliki peran penting dalam rantai pasokan
+                kopi, namun menghadapi ancaman deforestasi dan perubahan iklim
+                yang mengancam keberlanjutan, terutama bagi petani kecil. Kajian
+                terbaru
+                <a
+                  class="break-long-url"
+                  target="_blank"
+                  href="https://journal.ipb.ac.id/index.php/jpsl/article/view/52017"
+                  >Fardinatri et al. (2024)</a
+                >
+                menunjukkan 133 ribu hektare lahan kopi dikelola dengan sistem
+                agroforestri dan 44 ribu hektare tanpa naungan. Menariknya, 94%
+                lahan kopi di Tanggamus sudah memenuhi standar EUDR, membuka
+                peluang besar ke pasar Eropa. Kehadiran PT. Asia Makmur
+                diharapkan dapat memperkuat peran petani kecil dalam upaya
+                pengurangan deforestasi didalam rantai pasokan kopi.
+                <br />
+                <br />
+              </p>
+            </div>
+            <div class="flex-item flex-column">
+              <h3>Tujuan</h3>
+              <p class="text">
+                Sebagai bagian dari upaya untuk memenuhi persyaratan kepatuhan,
+                EUDR menetapkan tanggal batas (cut-off date) 31 Desember 2020,
+                artinya komoditas yang berasal dari konversi hutan atau
+                degradasi setelah tanggal itu tidak boleh beredar di pasar UE.
+                Oleh karena itu diperlukan analisis untuk memastikan apakah
+                produksi kopi dalam rantai pasokan bersumber dari area yang aman
+                (bebas deforestasi). Kajian secara geospasial dilakukan untuk
+                menilai risiko di wilayah pasokan PT. Asia Makmur di Tanggamus,
+                khususnya pada tiga Kecamatan: Bandar Negeri Semuong, Semaka,
+                dan Wonosobo. Dengan tujuan untuk:
+              </p>
+              <ul>
+                <li>Mengidentifikasi area dan rantai pasokan kopi.</li>
+                <li>
+                  Menilai tingkat risiko deforestasi.
+                  <ul>
+                    <li>Dokumen pendukung uji tuntas.</li>
+                  </ul>
+                </li>
+                <li>
+                  Memprioritaskan intervensi.
+                  <ul>
+                    <li>Rekomendasi strategi mitigasi risiko.</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!--End Pendahuluan-->
+          <!-------------------------------------------------------------------------------------------->
+        </div>
+      </div>
+      <!-------------------------------------------------------------------------------------------->
+      <!--Start hero1 Only-->
+      <!-- <div
+        class="hero1"
+        style="
+          background: url('img/tiga.png') no-repeat center;
+
+          background-size: cover;
+          height: 680px;
+        "
+      >
+        <div class="container">
+          <div class="mask-wrapper">
+            <div class="hover-area mask-identify" title="IDENTIFY"></div>
+            <div class="label label-identify">IDENTIFY</div>
+          </div>
+          <div class="mask-wrapper">
+            <div class="hover-area mask-prioritize" title="PRIORITIZE"></div>
+            <div class="label label-prioritize">PRIORITIZE</div>
+          </div>
+          <div class="mask-wrapper">
+            <div class="hover-area mask-assess" title="ASSESS"></div>
+            <div class="label label-assess">ASSESS</div>
+          </div>
+        </div>
+      </div> -->
+      <!--End hero1 Only-->
+      <!-------------------------------------------------------------------------------------------->
+
+      <div class="content">
+        <div class="content-table flex-column">
+          <!-------------------------------------------------------------------------------------------->
+          <!--Start Metodologi-->
+          <div class="flex-row">
+            <div class="flex-item flex-column" id="Metodologi">
+              <br />
+              <h2 id="centered-image-and-table" class="no-top-margin">
+                Metodologi
+              </h2>
+              <hr />
+              <h3 id="">Ruang Lingkup</h3>
+              <p class="text">
+                Definisi dari hutan dan deforestasi yang digunakan dalam kajian ini mengacu sesuai dengan peraturan EUDR:
+                <ul style="font-size:0.8em; line-height:1.4;">
+                  <li>
+                  Hutan (Forest) = Lahan dengan tutupan pohon >0.5 hektar, dengan pohon yang dapat mencapai tinggi 
+                  minimal 5 meter pada saat dewasa, dan memiliki tajuk/kanopi lebih dari 10%. Tidak termasuk:
+                    <ul>
+                      <li>
+                      Lahan yang didominasi sistem pertanian permanen (misalnya kebun sawit, kebun kopi, kebun karet, 
+                      agroforestri tertentu).
+                      </li>
+                      <li>
+                      Lahan dengan infrastruktur, pemukiman, atau penggunaan non-hutan.
+                      </li>
+                    </ul>
+                  <!-- <p class="text-small-margin2">
+                   Mengacu pada definisi FAO (Global Forest Resources Assessment)
+                  </p>     -->
+                  </li>
+                  <li>
+                  Deforestasi (Deforestation) = perubahan penggunaan lahan dari hutan menjadi penggunaan pertanian 
+                  (cropland, pasture, perkebunan, dll.), baik karena aktivitas manusia atau proses lain. 
+                  Tidak peduli apakah hutan sebelumnya dalam kondisi utuh (primary forest) atau sudah terdegradasi 
+                  (degraded forest)
+                  </li>
+                </ul>
+              </p>
+
+              <p class="text" >
+              <span style="display:inline-block; float:left; margin:0 30px 15px 0; text-align:left; max-width:400px; width:100%;">
+                <img src="img/analis.png" alt="Supply Chain" style="display:block; width:100%; height:auto;"/>
+                <span style="display:block; font-size:13px; color:#555; margin-top:4px; text-align:left;">
+       
+                </span>
+              </span>
+              Metode analisis di adopsi dari <a target="_blank" href=https://github.com/forestdatapartnership/whisp>WHISP - OpenForis</a>, 
+              solusi sumber terbuka yang membantu memproduksi informasi pemantauan hutan yang relevan untuk mendukung kepatuhan 
+              terhadap aturan deforestasi. Metode ini menggunakan beberapa set data dan informasi untuk mendapatkan pemahaman yang lebih detail, serta
+              mengurangi dampak potensi kesalahan pada masing-masing sumber data. Sehingga memberikan gambaran kuantitatif terkait 
+              rantai pasok dan deforestasi secara transparan dan dapat diaudit sesuai prinsip uji tuntas EUDR. 
+              </p>
+                            
+
+            </div>
+          </div>
+           <div class="flex-row">
+            <div class="flex-item flex-column">
+              <br/>
+               <iframe class="iframe-in-body" src="aoi.html"></iframe>
+             <br/>
+             <h3 id="">Alur Kerja</h3>
+              <iframe
+                class="iframe-in-body2"
+                src="alur.html"
+                scrolling="no"
+              ></iframe>
+              <p class="text">
+                1.Geodata
+               <br/>
+                Proses Pengumpulan dan pemeriksaan kualitas data plot kebun petani (geodata) yang diverifikasi berdasarkan kriteria 
+                (koordinat untuk lahan &lt;4 hektare dan poligon untuk lahan ≥4 hektare) geometry valid, status lahan legal/berizin, tidak tumpang tindih/beririsan dengan area konservasi, WDPA.<br/>Sumber data diperoleh dari: 
+                <ul style="font-size:0.8em; line-height:1.4;">
+                  <li>
+                   Pemetaan lapangan (GPS /mobile).
+                  </li>
+                  <li>
+                  Digitasi batas kebun dari citra resolusi tinggi.
+                  </li>
+                  <li>
+                  Data internal perusahaan /kooperasi /kelompok petani.
+                  </li>
+                </ul>
+              </p>
+
+               <!--Start Tab1-->
+          <p class="text" style="font-size:0.8em; line-height:1.4;">
+        Berikut adalah hasil verifikasi awal dari plot kebun kopi (geodata) di tiga Kecamatan: Bandar Negeri Semuong, Semaka, Wonosobo. Untuk saat ini tahap proses pengumpulan geodata masih berjalan.
+            </p>
+            
+            <div class="custom-tab" id="custom-tab-1">
+              <div class="custom-tab-menu center" >
+                  <a class="custom-tab-menu-item active" data-content="table1" style="font-size:0.8em; line-height:1.4;">Tabel</a>
+                 <a class="custom-tab-menu-item" data-content="iframe1a" style="font-size:0.8em; line-height:1.4;">Diagram</a> 
+                <a class="custom-tab-menu-item" data-content="iframe1b" style="font-size:0.8em; line-height:1.4;">Peta</a>
+              </div>
+              <div class="custom-tab-content" data-content="table1">
+               
+                <p class="text text-center graph-title" style="font-size:0.8em; line-height:1.4;">
+                Pengumpulan geodata (update Agustus 2025)
+                </p>
+                <div class="custom-table-container center add-top-margin-small">
+                  <table class="custom-table" style="font-size:0.8em; line-height:1.4;">
+                    <thead>
+                      <tr class="bg-color-gray">
+                        <th>Kecamatan</th>
+                        <th class="text-center">Koordinat</th>
+                        <th class="text-center">Poligon</th>
+                        <th class="text-center">Plot</th>
+                         <th class="text-center">Luas (ha)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>BNS</td>
+                        <td class="text-center">✔️</td>
+                        <td class="text-center">✔️</td>
+                        <td class="text-right">1.429</td>
+                        <td class="text-right">1.362</td>
+                      </tr>
+                      <!-- <tr class="bg-color-light-gray"> -->
+                      <tr class="bg-color-light-gray">
+                        <td>Semaka</td>
+                        <td class="text-center">✔️</td>
+                        <td class="text-center">✔️</td>
+                        <td class="text-right">571</td>
+                        <td class="text-right">538</td>
+                      </tr>
+                      <tr>
+                        <td>Wonosobo</td>
+                        <td class="text-center">❌</td>
+                        <td class="text-center">❌</td>
+                        <td class="text-right">-</td>
+                        <td class="text-right">-</td>
+                      </tr>
+                
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>TOTAL</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-right">2.000</td>
+                        <td class="text-right">1.900</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <p class="text text-center graph-title" style="font-size:0.8em; line-height:1.4;">
+               Hasil verifikasi
+                </p>
+                 <div class="custom-table-container center add-top-margin-small">
+                  <table class="custom-table" style="font-size:0.8em; line-height:1.4;">
+                    <thead>
+                      <tr class="bg-color-gray">
+                        <th rowspan="2"  class="text-center">Kecamatan</th>
+                        <th colspan="2" class="text-center">Data Valid</th>  
+                          <th colspan="2" class="text-center">Data Drop*</th>
+                      </tr>
+                      <tr class="bg-color-gray2"> 
+                        <th class="text-center">Plot</th>
+                        <th class="text-center">Luas (ha)</th>
+                        <th class="text-center">Plot</th>
+                        <th class="text-center">Luas (ha)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>BNS</td>
+                        <td class="text-right">777</td>
+                        <td class="text-right">1.019</td>
+                        <td class="text-right">652</td>
+                         <td class="text-right">343</td>
+                      </tr>
+                     <!-- <tr class="bg-color-light-gray"> -->
+                      <tr class="bg-color-light-gray">
+                        <td>Semaka</td>
+                        <td class="text-right">448</td>
+                        <td class="text-right">438</td>
+                        <td class="text-right">123</td>
+                         <td class="text-right">100</td>
+                      </tr>
+                      <tr>
+                        <td>Wonosobo</td>
+                        <td class="text-right">-</td>
+                       <td class="text-right">-</td>
+                        <td class="text-right">-</td>
+                          <td class="text-right">-</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>TOTAL</td>
+                        <td class="text-right">1.225</td>
+                        <td class="text-right">1.457</td>
+                        <td class="text-right">775</td>
+                         <td class="text-right">443</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <p style="font-size:0.8em; line-height:1.4;">
+                 *data drop (geometry duplikat/tidak valid | area berada diluar izin PS | area tumpang tindih/beririsan dengan zona konservasi, blok lindung, WDPA)
+                </p>
+              </div>
+              <div class="custom-tab-content no-padding" data-content="iframe1a">
+                <!-- <p class="text text-center graph-title add-top-right-left-padding add-bottom-border">
+                  Title for the bottom iframe
+                </p> -->
+                <iframe class="iframe-in-tab" src="pie_chart1.html"   scrolling="no"></iframe>
+              </div>
+              <div class="custom-tab-content no-padding" data-content="iframe1b">
+                <!-- <p class="text text-center graph-title add-top-right-left-padding add-bottom-border">
+                  Title for the bottom iframe
+                </p> -->
+                <iframe class="iframe-in-tab" src="geodatamap.html"></iframe>
+              </div>
+            </div>
+        <!--End Tab2-->
+           <br/>
+              <p class="text">
+                  2.Lapisan Kontekstual
+               <br/>
+                Lapisan kontekstual adalah kumpulan data berupa raster/vektor yang digunakan untuk analisis deforestasi 
+                periode 2021–2025 yang bersumber dari data publik yang tersedia melalui (portal/layers yang diakses via API/unduh), seperti:
+                 <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <!-- Kolom 1 -->
+                    <div style="flex: 1 1 300px; padding:10px;">
+                    <p style="margin-top:0;">Lapisan Utama:</p>
+                    <ul style="padding-left:20px; font-size:0.8em; line-height:1.4;">
+                    <li><a target="_blank" href="https://data.jrc.ec.europa.eu/dataset/e554d6fb-6340-45d5-9309-332337e5bc26">Global Forest Cover 2020 - version 2 [EU JRC]</a></li>
+                    <li><a target="_blank" href="https://forobs.jrc.ec.europa.eu/TMF/data#downloads">Tropical Moist Forests - deforestation year 2024 [EU JRC]</a></li>
+                    <li><a target="_blank" href="https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/download.html">Global Forest Change - version 1.12 [UMD GLAD]</a></li>
+                    <li><a target="_blank" href="https://data.globalforestwatch.org/datasets/gfw::integrated-deforestation-alerts/explore">Integrated Deforestation Alert [GFW]</a></li>
+                    </ul>
+                    </div>
+                    <!-- Kolom 2 -->
+                    <div style="flex: 1 1 300px; padding:10px;">
+                    <p style="margin-top:0;">Lapisan Pendukung:</p>
+                    <ul style="padding-left:20px; font-size:0.8em; line-height:1.4;">
+                    <li><a target="_blank" href="https://journal.ipb.ac.id/index.php/jpsl/article/view/52017">Peta Indikatif Perkebunan Kopi Kabupaten Tanggamus (Fardinatri, et al)</a></li>
+                    <!-- <li><a target="_blank" href="https://geoportal.menlhk.go.id/portal/apps/webappviewer/index.html?id=2ee8bdda1d714899955fccbe7fdf8468">Peta Penutupan Lahan Tahun 2020 (KLHK)</a></li> -->
+                    <li><a target="_blank" href="https://geoportal.menlhk.go.id/portal/apps/webappviewer/index.html?id=2ee8bdda1d714899955fccbe7fdf8468">Peta Kawasan Hutan (KLHK)</a></li>
+                    <li><a target="_blank" href="https://www.protectedplanet.net/en">World Database on Protected Areas (WDPA)</a></li>
+                    </ul>
+                    </div>
+                  </div>
+              <p class="text">
+                <br/>
+                  3. Analisis GIS
+               <br/>
+                Pemrosesan data dan analisis menggunakan perangkat lunak ArcGis/QGIS dengan metode overlay poligon dan ekstraksi statistik zonal 
+                (menghitung piksel yang relevan) dari serangkaian dataset publik untuk satu set poligon (sebuah bidang lahan). Hasil analisis disajikan
+                dalam bentuk peta | tabel | diagram.
+              </p>
+               <p class="text">
+                <br/>
+                  4. Penilaian Risiko
+               <br/>
+                Penilaian risiko deforestasi berdasarkan informasi yang dihasilkan dari analisis GIS untuk mengklasifikasikan lahan 
+                ke dalam tiga tingkat risiko:</p>
+            </div>
+          </div>
+          <div class="flex-row">
+              <div class="flex-item flex-item-stretch flex-column">
+                <img
+                  class="image max-width-400"
+                  src="img/flaticon/deforestation.gif"
+                />    <p class="text-small-margin1">
+                  Klasifikasi Risiko diadopsi dari:
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://openforis.org/solutions/whisp/"
+                    >WHISP - OpenForis</a
+                  >
+                </p>
+              </div>
+              <div class="flex-item flex-item-stretch-4 flex-column">
+                <p class="text" >
+                  <a
+                    ><div class="control-group">
+                      <button
+                        class="custom-button custom-button-primary pulse-primary"
+                      >
+                        Risiko Rendah
+                      </button>
+                    </div></a 
+                  >
+                  <a style="font-size:0.8em; line-height:1.4;">
+                  Setiap lahan di luar hutan yang dipetakan, bertumpangan dengan
+                  peta komoditas yang tersedia atau dengan peta gangguan yang
+                  teramati sebelum 2020.
+                  </a>
+                  <br/>
+                  <a
+                    ><div class="control-group">
+                      <button
+                        class="custom-button custom-button-danger pulse-primary"
+                      >
+                        Risiko Tinggi
+                      </button>
+                    </div></a
+                  >
+                   <a style="font-size:0.8em; line-height:1.4;">
+                  Lahan berada di dalam hutan yang dipetakan, tidak berada di
+                  dalam peta komoditas mana pun, dan hanya gangguan yang
+                  terdeteksi setelah 2020.
+                  </a>
+                  <br/>
+                  <a
+                    ><div class="control-group">
+                      <button
+                        class="custom-button custom-button-info pulse-primary"
+                      >
+                        Butuh Informasi Lanjutan
+                      </button>
+                    </div></a 
+                  >
+                   <a style="font-size:0.8em; line-height:1.4;">
+                  Lahan yang belum terganggu atau tidak memiliki bukti lain
+                  untuk menentukan tingkat risikonya. Klasifikasi ini menyoroti
+                  area yang memerlukan penyelidikan lebih lanjut.
+                  </a>
+                </p>
+            
+              </div>
+           
+          </div>
+        </div>
+      </div>
+       <!--End Metodologi-->
+          <!-------------------------------------------------------------------------------------------->
+
+
+      <div
+        class="banner"
+        style="
+          background: url('img/gambar2.png') no-repeat center;
+          background-size: cover;
+          height: 700px;
+        "
+      ></div>
+
+      <div class="content">
+        <div class="content-table flex-column">
+          <!-------------------------------------------------------------------------------------------->
+          <!--Start analisis-->
+          <div class="flex-row">
+            <div class="flex-item flex-column" id="Analisis">
+              <br />
+              <h2 id="" class="no-top-margin">Hasil Analisis Sementara</h2>
+              <hr />
+         
+                <h3 id="Rantai">Rantai Pasokan Kopi</h3>
+            <p class="text">
+            <span style="display:inline-block; float:left; margin:0 30px 15px 0; text-align:left; max-width:400px; width:100%;">
+              <img src="img/doklap.png" alt="doklap" style="display:block; width:100%; height:auto;"/>
+              <span style="display:block; font-size:10px; color:#555; margin-top:4px; text-align:right;">
+                Dok. lapangan (Juli, 2025)
+              </span>
+            </span>
+              Proses penelusuran awal untuk rantai pasokan kopi PT. Asia Makmur di wilayah kajian dimulai dengan melakukan crosscheck 
+              hasil verifikasi plot kebun kopi (geodata valid) kepada kolektor kopi di Kabupaten Tanggamus yaitu Gudang Mujur Jaya 
+              yang berlokasi di Kecamatan Kota Agung dan beberapa sub kolektor dari tiga kecamatan (Bandar Negeri Semuong, Semaka, Wonosobo)
+            <br/>
+           
+            Tahap lanjutan untuk penelusuran pada pembeli lokal dan petani pemasok pada tingkat Desa untuk saat ini sedang dalam proses follow up. 
+            </p>
+
+             <p class="text">
+              
+                Berdasarkan hasil identifikasi sementara, dari (geodata valid) dan crosscheck kepada kolektor /sub kolektor secara langsung, 
+                diketahui asal plot kebun petani pemasok kopi untuk Asia Makmur per Kecamatan adalah sebagai berikut:
+                <ul>
+                  <li>
+                   Kecamatan Bandar Negeri Semuong.
+                   <ul>
+                    <li>Kelompok petani HKm Tunas Jaya (Desa Atar lebar)</li>
+                    <li>Kelompok petani HKm Hutan Lestari (Desa Sinar Bangun)</li>
+                  
+                    <li>Kelompok petani Kebun APL (Desa Simpang Bayur)</li>
+                  </ul>
+                  </li>
+                  <li>
+                 Kecamatan Semaka
+                   <ul>
+                    <li>Kelompok petani HKm Lestari Sejahtera (Desa Way Kerap, Pardawaras, Srikaton)</li>
+              
+                  </ul>
+                  </li>
+                  <li>
+                 Kecamatan Wonosobo
+                    <ul>
+                    <li>Belum teridentifikasi</li>
+              
+                  </ul>
+                  </li>
+                </ul>
+              </p>
+
+               <!--Start Tab2-->            
+            <div class="custom-tab" id="custom-tab-2">
+              <div class="custom-tab-menu center" >
+                  <a class="custom-tab-menu-item active" data-content="table2" style="font-size:0.8em; line-height:1.4;">Tabel</a>
+                 <a class="custom-tab-menu-item" data-content="iframe2a" style="font-size:0.8em; line-height:1.4;">Diagram</a> 
+                <a class="custom-tab-menu-item" data-content="iframe2b" style="font-size:0.8em; line-height:1.4;">Peta</a>
+              </div>
+              <div class="custom-tab-content" data-content="table2">
+               
+                <p class="text text-center graph-title" style="font-size:0.8em; line-height:1.4;">
+                Rincian asal plot kebun petani pemasok kopi
+                </p>
+                <div class="custom-table-container center add-top-margin-small">
+                  <table class="custom-table" style="font-size:0.8em; line-height:1.4;">
+                    <thead>
+                      <tr class="bg-color-gray">
+                        <th >Kecamatan</th>
+                        <th class="text-center">Desa</th>
+                        <th class="text-center">Group</th>
+                        <th class="text-center">Plot</th>
+                         <th class="text-center">Luas (ha)</th>
+                         <th class="text-center">Produksi (kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>BNS</td>
+                        <td class="text-left">Atar Lebar</td>
+                        <td class="text-left">HKm Tunas Jaya</td>
+                        <td class="text-right">585</td>
+                        <td class="text-right">837</td>
+                        <td class="text-right"></td>
+                      </tr>
+                       <tr class="bg-color-light-gray">
+                        <td></td>
+                        <td class="text-left">Sinar Bangun</td>
+                        <td class="text-left">HKm Hutan Lestari</td>
+                        <td class="text-right">71</td>
+                        <td class="text-right">106</td>
+                        <td class="text-right"></td>
+                      </tr>
+                       <tr>
+                        <td></td>
+                        <td class="text-left">Simpang Bayur</td>
+                        <td class="text-left">Kebun APL</td>
+                        <td class="text-right">121</td>
+                        <td class="text-right">77</td>
+                        <td class="text-right"></td>
+                      </tr>
+                      <!-- <tr class="bg-color-light-gray"> -->
+                      <tr class="bg-color-light-gray">
+                        <td>Semaka</td>
+                        <td class="text-left">Way Kerap</td>
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-right">317</td>
+                        <td class="text-right">285</td>
+                        <td class="text-right"></td>
+                      </tr>
+                          <tr>
+                        <td></td>
+                        <td class="text-left">Pardawaras</td>
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-right">111</td>
+                        <td class="text-right">130</td>
+                        <td class="text-right"></td>
+                      </tr>
+                          <tr class="bg-color-light-gray">
+                        <td></td>
+                        <td class="text-left">Srikaton</td>
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-right">20</td>
+                        <td class="text-right">23</td>
+                     <td class="text-right"></td>
+                      <tr>
+                        <td>Wonosobo</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">-</td>
+                        <td class="text-right">-</td>
+                        <td class="text-right">-</td>
+                      </tr>
+                
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>TOTAL</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-right">1.225</td>
+                        <td class="text-right">1.457</td>
+                            <td class="text-right"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <p class="text text-center graph-title" style="font-size:0.8em; line-height:1.4;">
+               Hasil identifikasi pelaku dalam rantai pasokan kopi (sampel)
+                </p>
+                 <div class="custom-table-container center add-top-margin-small">
+                   <table class="custom-table" style="font-size:0.8em; line-height:1.4;">
+                    <thead>
+                      <tr class="bg-color-gray">
+                        <th rowspan="2" class="text-center">Group</th>
+                        <th rowspan="2" class="text-center">Desa</th>
+                        <th rowspan="2" class="text-center">Kecamatan</th>
+                        <th colspan="4" class="text-center">Pelaku dalam rantai pasokan</th>
+                      
+                      </tr>
+                       <tr class="bg-color-gray2">
+                        <th class="text-center">Pembeli Lokal</th>
+                        <th class="text-center">Sub Kolektor</th>
+                         <th class="text-center">Kolektor</th>
+                         <th class="text-center">Ekportir</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-left">HKm Tunas Jaya</td>
+                        <td class="text-left">Atar Lebar</td>
+                        <td>BNS</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Sarwo Edi</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                       <tr class="bg-color-light-gray">
+                        <td class="text-left">HKm Hutan Lestari</td>
+                        <td class="text-left">Sinar Bangun</td>
+                        <td>BNS</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Joni</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                      <tr>
+                        <td class="text-left">Kebun APL</td>
+                        <td class="text-left">Simpang Bayur</td>
+                        <td>BNS</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Sunarti</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                       <tr class="bg-color-light-gray">
+                        <td class="text-left">Kebun APL</td>
+                        <td class="text-left">Simpang Bayur</td>
+                        <td>BNS</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Jumaroh</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+               
+                      <!-- <tr class="bg-color-light-gray"> -->
+                      <tr >
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-left">Way Kerap</td>
+                        <td>Semaka</td>
+                        <td class="text-left">Supriyanto</td>
+                        <td class="text-left">Sarwo Edi</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                      <tr class="bg-color-light-gray">
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-left">Pardawaras</td>
+                        <td>Semaka</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Sarwo Edi</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                      <tr >
+                        <td class="text-left">HKm Lestari Sejahtera</td>
+                        <td class="text-left">Srikaton</td>
+                        <td>Semaka</td>
+                        <td class="text-left">Tasin</td>
+                        <td class="text-left">Sarwo Edi</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      <tr class="bg-color-light-gray">
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Buyung</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                             <tr >
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left">Lainnya*</td>
+                        <td class="text-left"></td>
+                        <td class="text-left">Eka Saputra</td>
+                        <td class="text-left">Mujur Jaya</td>
+                        <td class="text-left">Asia Makmur</td>
+                      </tr>
+                
+                    </tbody>
+                    <!-- <tfoot>
+                      <tr>
+                        <td>TOTAL</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-right">1.225</td>
+                        <td class="text-right">1.457</td>
+                            <td class="text-right">?</td>
+                      </tr>
+                    </tfoot> -->
+                  </table>
+                </div>
+                <p style="font-size:0.8em; line-height:1.4;">
+                 *Lainnya: kolektor /sub kolektor membeli pasokan kopi dari Kabupaten lain (Lampung Barat)
+                </p>
+              </div>
+              <div class="custom-tab-content no-padding" data-content="iframe2a">
+                <!-- <p class="text text-center graph-title add-top-right-left-padding add-bottom-border">
+                  Title for the bottom iframe
+                </p> -->
+                <iframe class="iframe-in-tab" src="sankey2.html"   ></iframe>
+              </div>
+              <div class="custom-tab-content no-padding" data-content="iframe2b">
+                <!-- <p class="text text-center graph-title add-top-right-left-padding add-bottom-border">
+                  Title for the bottom iframe
+                </p> -->
+                <iframe class="iframe-in-tab" src="supplymap.html"></iframe>
+              </div>
+            </div>
+        <!--End Tab2-->
+                <h3 id="Risiko">Risiko Deforestasi</h3>
+                
+             
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--End Analisis-->
+      <!-------------------------------------------------------------------------------------------->
+
+       <div class="content">
+        <div class="content-table flex-column">
+          <!-------------------------------------------------------------------------------------------->
+          <!--Start Rekomendasi-->
+          <div class="flex-row">
+            <div class="flex-item flex-column" id="Rekomendasi">
+              <br />
+              <h2 id="" class="no-top-margin">Rekomendasi</h2>
+              <hr />
+                  
+                
+             
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--End Analisis-->
+      <!-------------------------------------------------------------------------------------------->
+
+      <!-- <div
+        class="banner"
+        style="
+          background: url(img/defor.png) no-repeat center;
+          background-size: cover;
+          height: 600px;
+        "
+      ></div> -->
+
+      <div class="content">
+        <div class="content-table flex-column">
+          <!-------------------------------------------------------------------------------------------->
+          <!--Start Referensi-->
+          <div class="flex-row">
+            <div class="flex-item flex-column" id="Referensi">
+              <br />
+              <h2 id="" class="no-top-margin">Sumber Referensi dan Dataset</h2>
+              <hr />
+              <h3 id="">Referensi:</h3>
+              
+
+               <ul style="font-size:0.8em; line-height:1.4;">
+                <li>
+                  European Commission. (2023). Regulation (EU) 2023/1115 of the European Parliament and of the Council of 31 May 2023 on the making available on the Union market as well as the export from the Union of certain commodities and products associated with deforestation and forest degradation. Official Journal of the European Union. 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32023R1115"
+                    >https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32023R1115</a
+                  >
+                </li>
+                <li>
+                  Fardinatri, I. D., Condro, A., Hayati, D., & Anhar, A. (2024).
+                  Environmental dynamics in the Sumatran coffee landscapes:
+                  Opportunities and challenges through spatial perspectives.
+                  Jurnal Pengelolaan Sumberdaya Alam dan Lingkungan, 14(3),
+                  438–450.
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://doi.org/10.29244/jpsl.14.3.438"
+                    >https://doi.org/10.29244/jpsl.14.3.438</a
+                  >
+                </li>
+                <li>
+                  Food and Agriculture Organization of the United Nations. (2025). Whisp: What is in that plot? Open Foris. 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://openforis.org/solutions/whisp/"
+                    >https://openforis.org/solutions/whisp/</a
+                  >
+                </li>
+                <li>
+                 Pemerintah Provinsi Lampung. (2023). Perkembangan Produksi Komoditi Kopi Robusta Tahun 2019 sampai Tahun 2023. Lampungprov.go.id. 
+
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://opendata.lampungprov.go.id/dataset/produksi-kopi-robusta-20192023"
+                    >https://opendata.lampungprov.go.id/dataset/produksi-kopi-robusta-20192023</a
+                  >
+                </li>
+
+                <li>
+                 Trase. (2023). Indonesia coffee supply chain dataset (2020) [Dataset]. Stockholm Environment Institute & Global Canopy. 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://trase.earth/explore/supply-chain/indonesia/coffee?chartType=sankey&year=2020&indicator=volume&dimension=exporter&dimension=country_of_destination&hideDomestic=false&exporter=ASIA+MAKMUR"
+                  >
+                    https://trase.earth/explore/supply-chain/indonesia/coffee?chartType=sankey&year=2020&indicator=volume&dimension=exporter&dimension=country_of_destination&hideDomestic=false&exporter=ASIA+MAKMUR</a
+                  >
+                </li>
+                
+              </ul>
+           
+       
+              <h3 id="">Dataset:</h3>
+               <ul style="font-size:0.8em; line-height:1.4;">
+                <li>
+                  European Commission, Joint Research Centre. (2021). Global Forest Cover 2020, version 2 [Dataset]. European Commission, Joint Research Centre (JRC). 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://data.jrc.ec.europa.eu/dataset/e554d6fb-6340-45d5-9309-332337e5bc26"
+                  >
+                   https://data.jrc.ec.europa.eu/dataset/e554d6fb-6340-45d5-9309-332337e5bc26</a
+                  >
+              
+                </li>
+                <li>
+             European Commission, Joint Research Centre. (2024). Tropical Moist Forests: Annual Deforestation Year 2024 [Dataset]. European Commission, Joint Research Centre (JRC). 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://forobs.jrc.ec.europa.eu/TMF/data#downloads"
+                    >https://forobs.jrc.ec.europa.eu/TMF/data#downloads</a
+                  >
+          
+                </li>
+                     <li>
+                Fardinatri, et al. (2024). Peta Perkebunan Kopi Kabupaten Tanggamus [Dataset]. Data internal penelitian, tidak dipublikasikan. 
+
+                </li>
+                
+                <li>
+                 Global Forest Watch. (2024). Integrated Deforestation Alerts [Dataset]. World Resources Institute. 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://data.globalforestwatch.org/datasets/gfw::integrated-deforestation-alerts/explore"
+                    >https://data.globalforestwatch.org/datasets/gfw::integrated-deforestation-alerts/explore</a
+                  >
+                </li>
+                <li>
+               Hansen, M. C., Potapov, P. V., Moore, R., Hancher, M., Turubanova, S., Tyukavina, A., … Townshend, J. R. G. (2013, updated 2023). Global Forest Change, version 1.12 [Dataset]. University of Maryland, Global Land Analysis and Discovery (GLAD). 
+                  <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/download.html"
+                    >https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/download.html</a
+                  >
+                
+                </li>
+                    <li>
+                Kementerian Lingkungan Hidup dan Kehutanan (KLHK). (2020). Peta Kawasan Hutan Indonesia [Dataset]. Direktorat Inventarisasi dan Pemantauan Sumber Daya Hutan, KLHK.      
+                <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="http://webgis.menlhk.go.id/"
+                    >http://webgis.menlhk.go.id/</a
+                  >
+                 </li>
+                <!-- <li>
+                Kementerian Lingkungan Hidup dan Kehutanan (KLHK). (2020). Peta Penutupan Lahan Indonesia Tahun 2020 [Dataset]. Direktorat Inventarisasi dan Pemantauan Sumber Daya Hutan, KLHK.      
+                <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="http://webgis.menlhk.go.id/"
+                    >http://webgis.menlhk.go.id/</a
+                  >
+                 </li> -->
+              
+                <li>
+                UNEP-WCMC, & IUCN. (2025). World Database on Protected Areas (WDPA) [Dataset]. UNEP-WCMC & IUCN. 
+                      <a
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://www.protectedplanet.net/"
+                    >https://www.protectedplanet.net/</a
+                  > 
+              </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--End Referensi-->
+      <div class="footer-container"></div>
+      <!--start Heo3-->
+      <!-- <div
+        class="banner"
+        style="
+          background: url('img/hero3.png') no-repeat right;
+          background-size: cover;
+          height: 600px;
+        "
+      ></div> -->
+      <!--End Heo3-->
+    </div>
+    <div onclick="scrollToTop()" class="scrollTop" id="scrollTop">
+      <i data-feather="arrow-up"></i>
+    </div>
+    <!-- Feather Icons -->
+    <script>
+      feather.replace();
+    </script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Circles Preview</title>
+    <style>
+      body {
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .container img {
+        max-width: 700px;
+        display: block;
+      }
+
+      .hotspot {
+        position: absolute;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .hotspot:hover .tooltip {
+        opacity: 1;
+      }
+
+      /* Lingkaran atas */
+      .circle-top {
+        top: 5%;
+        left: 35%;
+        width: 30%;
+        height: 40%;
+      }
+
+      /* Lingkaran kiri tengah */
+      .circle-left {
+        top: 35%;
+        left: 10%;
+        width: 30%;
+        height: 40%;
+      }
+
+      /* Lingkaran kanan bawah */
+      .circle-right {
+        top: 45%;
+        left: 55%;
+        width: 30%;
+        height: 40%;
+      }
+
+      /* Posisi tooltip */
+      .circle-top .tooltip {
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .circle-left .tooltip {
+        top: 50%;
+        left: -20px;
+        transform: translate(-100%, -50%);
+      }
+
+      .circle-right .tooltip {
+        top: 50%;
+        left: 100%;
+        transform: translate(0, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="tiga.png" alt="Diagram" />
+
+      <!-- Lingkaran atas -->
+      <div class="hotspot circle-top">
+        <div class="tooltip">IDENTIFY</div>
+      </div>
+
+      <!-- Lingkaran kiri tengah -->
+      <div class="hotspot circle-left">
+        <div class="tooltip">PRIORITIZE</div>
+      </div>
+
+      <!-- Lingkaran kanan bawah -->
+      <div class="hotspot circle-right">
+        <div class="tooltip">ASSESS</div>
+      </div>
+    </div>
+  </body>
+</html>
