@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
+  <style>
+    body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
+    #map { flex: 1; width: 100%; }
+    .legend {
+      position: absolute;
+      bottom: 20px; left: 10px;
+      background: white; padding: 6px 12px;
+      border-radius: 4px; font-size: 14px;
+      min-width: 200px; white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .legend-item { display: flex; align-items: center; margin-bottom: 6px; }
+    .legend-color { width: 18px; height: 18px; margin-right: 8px; border: 1px solid #555; }
+    @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-gesture-handling"></script>
+  <script>
+    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 6);
+
+    // Basemaps
+    const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+    }).addTo(map);
+    const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+    });
+    const baseMaps = { "OSM Standar": osm, "Citra Satelit (Esri)": satellite };
+    const layerControl = L.control.layers(baseMaps).addTo(map);
+
+    // AOI
+    const aoiUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/Map_Animasi/main/AOI.geojson";
+    const defaultStyle = { color: "red", weight: 2, fillOpacity: 0.2 };
+    const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
+    let aoiLayer, validLayer;
+    const MIN_START_ZOOM = 10;
+
+    function addAOI() {
+      return fetch(aoiUrl).then(res => res.json()).then(data => {
+        aoiLayer = L.geoJSON(data, {
+          style: defaultStyle,
+          onEachFeature: (feature, layer) => {
+            let popupContent = "";
+            if (feature.properties) {
+              popupContent = Object.entries(feature.properties)
+                .filter(([k]) => k && k.toLowerCase() !== "area")
+                .map(([k, v]) => `<b>${k}:</b> ${v}`)
+                .join("<br>");
+            }
+            if (popupContent) layer.bindPopup(popupContent);
+            layer.on({
+              mouseover: e => e.target.setStyle(highlightStyle),
+              mouseout: e => aoiLayer.resetStyle(e.target)
+            });
+          }
+        }).addTo(map);
+        map.fitBounds(aoiLayer.getBounds(), { padding: [24,24], maxZoom: MIN_START_ZOOM });
+        map.setMaxBounds(aoiLayer.getBounds());
+        layerControl.addOverlay(aoiLayer, "Area of Interest");
+        aoiLayer.bringToBack();
+      });
+    }
+
+    // Kebun Pemasok
+    const validUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Valid.geojson";
+    const validStyle = { color: "blue", weight: 2, fillOpacity: 0.4 };
+
+    function addValid() {
+      return fetch(validUrl).then(res => res.json()).then(data => {
+        validLayer = L.geoJSON(data, { 
+          style: validStyle,
+          onEachFeature: (feature, layer) => {
+            const p = feature.properties || {};
+            let uid = p.UID_KEBUN || "Tidak ada UID";
+            let luas = (p.LUAS_HA !== undefined && p.LUAS_HA !== null && !isNaN(Number(p.LUAS_HA)))
+              ? Number(p.LUAS_HA).toFixed(2)
+              : "Tidak ada data";
+            let group = (p.GROUP_ !== undefined && p.GROUP_ !== null) ? String(p.GROUP_) : "Tidak ada data";
+            group = group.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+            let tooltipContent = `<b>UID Kebun:</b> ${uid}<br><b>Luas (ha):</b> ${luas}<br><b>Group:</b> ${group}`;
+
+            layer.on("click", () => {
+              layer.bindTooltip(tooltipContent, {
+                permanent: false,
+                direction: "top",
+                sticky: true
+              }).openTooltip();
+            });
+          }
+        }).addTo(map);
+        layerControl.addOverlay(validLayer, "Kebun Pemasok");
+      });
+    }
+
+    addAOI().then(addValid);
+
+    // ==== JRC Global Forest Cover 2020 v2 WMS ====
+    const gfc2020v2 = L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/iforce/gfc2020/wms.py?", {
+      layers: "gfc2020_v2",
+      format: "image/png",
+      transparent: true,
+      attribution: "EU JRC - Global Forest Cover 2020 v2",
+      opacity: 0.6
+    });
+    layerControl.addOverlay(gfc2020v2, "Global Forest Cover 2020 v2 (EU JRC)");
+
+    // ==== Tropical Moist Forests - Deforestation year 2024 WMS ====
+    const tmf2024 = L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/iforce/gfc2020/wms.py?", {
+      layers: "tmf_deforestation_year_2024",
+      format: "image/png",
+      transparent: true,
+      attribution: "EU JRC - Tropical Moist Forests Deforestation 2024",
+      opacity: 0.7
+    });
+    layerControl.addOverlay(tmf2024, "TMF Deforestation Year 2024 (EU JRC)");
+
+    // ==== Global Forest Change v1.12 (UMD GLAD) ====
+    const gfcGLAD = L.tileLayer(
+      "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.12/{z}/{x}/{y}.png",
+      {
+        attribution: "Hansen/UMD/Google/USGS/NASA - Global Forest Change v1.12 (2000–2023)",
+        maxZoom: 13,
+        opacity: 0.8
+      }
+    );
+    layerControl.addOverlay(gfcGLAD, "Global Forest Change v1.12 (UMD GLAD)");
+
+    // Legend
+    const legend = L.control({ position: "bottomleft" });
+    legend.onAdd = () => {
+      const div = L.DomUtil.create("div", "legend");
+      div.innerHTML = `
+        <div class="legend-item"><div class="legend-color" style="background: red; opacity:0.5;"></div> Area of Interest</div>
+        <div class="legend-item"><div class="legend-color" style="background: blue;"></div> Kebun Pemasok</div>
+        <div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div> GFC2020 v2 (EU JRC)</div>
+        <div class="legend-item"><div class="legend-color" style="background: orange; opacity:0.7;"></div> TMF Deforestation 2024</div>
+        <div class="legend-item"><div class="legend-color" style="background: purple; opacity:0.8;"></div> GFC v1.12 (UMD GLAD)</div>`;
+      return div;
+    };
+    legend.addTo(map);
+  </script>
+</body>
+</html>

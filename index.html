@@ -342,7 +342,7 @@
                 1.Geodata
                <br/>
                 Proses Pengumpulan dan pemeriksaan kualitas data plot kebun petani (geodata) yang diverifikasi berdasarkan kriteria 
-                (koordinat untuk lahan &lt;4 hektare dan poligon untuk lahan ≥4 hektare) geometry valid, status lahan legal/berizin, tidak tumpang tindih/beririsan dengan area konservasi, WDPA.<br/>Sumber data diperoleh dari: 
+                (koordinat untuk lahan &lt;4 hektare dan poligon untuk lahan ≥4 hektare) geometry valid, status lahan legal/berizin, tidak tumpang tindih/beririsan dengan area konservasi, blok lindung, WDPA.<br/>Sumber data diperoleh dari: 
                 <ul style="font-size:0.8em; line-height:1.4;">
                   <li>
                    Pemetaan lapangan (GPS /mobile).
@@ -473,7 +473,7 @@
                   </table>
                 </div>
                 <p style="font-size:0.8em; line-height:1.4;">
-                 *data drop (geometry duplikat/tidak valid | area berada diluar izin PS | area tumpang tindih/beririsan dengan zona konservasi, blok lindung, WDPA)
+                 *data drop (geometry duplikat/tidak valid | area berada diluar izin PS | area tumpang tindih/beririsan dengan area konservasi, blok lindung, WDPA)
                 </p>
               </div>
               <div class="custom-tab-content no-padding" data-content="iframe1a">
@@ -494,8 +494,8 @@
               <p class="text">
                   2.Lapisan Kontekstual
                <br/>
-                Lapisan kontekstual adalah kumpulan data berupa raster/vektor yang digunakan untuk analisis deforestasi 
-                periode 2021–2025 yang bersumber dari data publik yang tersedia melalui (portal/layers yang diakses via API/unduh), seperti:
+                Kumpulan data berupa raster/vektor yang digunakan untuk analisis deforestasi 
+                periode 2021–2025 bersumber dari data publik yang tersedia melalui (portal/layers yang diakses via API/unduh), seperti:
                  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
                     <!-- Kolom 1 -->
                     <div style="flex: 1 1 300px; padding:10px;">
@@ -638,7 +638,7 @@
               yang berlokasi di Kecamatan Kota Agung dan beberapa sub kolektor dari tiga kecamatan (Bandar Negeri Semuong, Semaka, Wonosobo)
             <br/>
            
-            Tahap lanjutan untuk penelusuran pada pembeli lokal dan petani pemasok pada tingkat Desa untuk saat ini sedang dalam proses follow up. 
+            Tahap lanjutan untuk penelusuran pada pembeli lokal dan petani pemasok pada tingkat kebun untuk saat ini sedang dalam proses follow up. 
             </p>
 
              <p class="text">
@@ -902,13 +902,17 @@
               </div>
             </div>
         <!--End Tab2-->
-                <h3 id="Risiko">Risiko Deforestasi</h3>
+                <h3 id="Risiko">Risiko Deforestasi (saat ini sedang dalam tahap pengolahan data)</h3>
                 
              
             </div>
           </div>
         </div>
       </div>
+        <div
+        class="banner"
+        style="height: 700px;"
+      > <iframe class="iframe-in-banner" src="riskmap.html" scrolling="no"></iframe></div>
       <!--End Analisis-->
       <!-------------------------------------------------------------------------------------------->
 
@@ -928,7 +932,7 @@
           </div>
         </div>
       </div>
-      <!--End Analisis-->
+      <!--End Rekomendasi-->
       <!-------------------------------------------------------------------------------------------->
 
       <!-- <div
