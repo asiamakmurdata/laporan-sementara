@@ -117,27 +117,6 @@
     });
     layerControl.addOverlay(gfc2020v2, "Global Forest Cover 2020 v2 (EU JRC)");
 
-    // ==== Tropical Moist Forests - Deforestation year 2024 WMS ====
-    const tmf2024 = L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/iforce/gfc2020/wms.py?", {
-      layers: "tmf_deforestation_year_2024",
-      format: "image/png",
-      transparent: true,
-      attribution: "EU JRC - Tropical Moist Forests Deforestation 2024",
-      opacity: 0.7
-    });
-    layerControl.addOverlay(tmf2024, "TMF Deforestation Year 2024 (EU JRC)");
-
-    // ==== Global Forest Change v1.12 (UMD GLAD) ====
-    const gfcGLAD = L.tileLayer(
-      "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2023-v1.12/{z}/{x}/{y}.png",
-      {
-        attribution: "Hansen/UMD/Google/USGS/NASA - Global Forest Change v1.12 (2000–2023)",
-        maxZoom: 13,
-        opacity: 0.8
-      }
-    );
-    layerControl.addOverlay(gfcGLAD, "Global Forest Change v1.12 (UMD GLAD)");
-
     // Legend
     const legend = L.control({ position: "bottomleft" });
     legend.onAdd = () => {
@@ -145,9 +124,7 @@
       div.innerHTML = `
         <div class="legend-item"><div class="legend-color" style="background: red; opacity:0.5;"></div> Area of Interest</div>
         <div class="legend-item"><div class="legend-color" style="background: blue;"></div> Kebun Pemasok</div>
-        <div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div> GFC2020 v2 (EU JRC)</div>
-        <div class="legend-item"><div class="legend-color" style="background: orange; opacity:0.7;"></div> TMF Deforestation 2024</div>
-        <div class="legend-item"><div class="legend-color" style="background: purple; opacity:0.8;"></div> GFC v1.12 (UMD GLAD)</div>`;
+        <div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div> GFC2020 v2 (EU JRC)</div>`;
       return div;
     };
     legend.addTo(map);
