@@ -10,19 +10,57 @@
     body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
     #map { flex: 1; width: 100%; }
     .legend {
+    font-family: "Roboto Mono", monospace;
+    font-size: 14px;
       position: absolute;
       bottom: 20px; left: 10px;
       background: white; padding: 6px 12px;
-      border-radius: 4px; font-size: 14px;
+      border-radius: 4px; font-size: 10px;
       min-width: 160px; white-space: nowrap;
     }
     .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
     .legend-color { width: 20px; height: 20px; margin-right: 8px; border: 1px solid #555; }
     /* Responsive legend scaling for mobile */
     @media (max-width: 768px) {
-      .legend { transform: scale(0.5); transform-origin: bottom left; }
+      .legend {
+    font-family: "Roboto Mono", monospace;
+    font-size: 14px; transform: scale(0.5); transform-origin: bottom left; }
     }
-  </style>
+  
+  .leaflet-control-layers {
+    font-family: "Roboto Mono", monospace;
+    font-size: 10px;
+  }
+  @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+@media (max-width: 768px) {
+  .leaflet-control-layers {
+    font-size: 8px;       /* perkecil font */
+    padding: 2px 4px;      /* lebih rapat */
+  }
+  .leaflet-control-layers-overlays label {
+    font-size: 8px;       /* teks overlay lebih kecil */
+    line-height: 1.1em;
+  }
+  .leaflet-control-layers-overlays input[type="checkbox"] {
+    transform: scale(0.8); /* perkecil checkbox */
+    margin-top: 1px;
+  }
+  .leaflet-control-layers-label {
+    font-size: 8px;       /* juga perkecil label pemisah */
+  }
+
+
+
+.leaflet-popup-content {
+  font-family: "Roboto Mono", monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.leaflet-popup-content-wrapper {
+  font-family: "Roboto Mono", monospace;
+}
+
+</style>
 </head>
 <body>
   <div id="map"></div>
@@ -48,7 +86,7 @@
     const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
     let aoiLayer, validLayer;
-    const MIN_START_ZOOM = 10;
+    const MIN_START_ZOOM = 11;
 
     function addAOI() {
       return fetch(aoiUrl).then(res => res.json()).then(data => {
@@ -100,26 +138,79 @@
           groups[status].push(f);
         });
         Object.keys(groups).forEach(status => {
-          const layer = L.geoJSON({ type: "FeatureCollection", features: groups[status] }, { style: dropStyle }).addTo(map);
+          const layer = L.geoJSON(
+        { type: "FeatureCollection", features: groups[status] },
+        { style: dropStyle }
+      );
           layerControl.addOverlay(layer, `Drop - ${status}`);
           layer.bringToBack();
         });
       });
     }
 
-    addAOI().then(addValid).then(addDrop);
+    addAOI()
+  .then(addValid)
+  .then(addDrop)
+  .then(() => {
+    legend.remove();
+    legend.onAdd = updateLegend;
+    legend.addTo(map);
+  });
 
     // Legend
-    const legend = L.control({ position: "bottomleft" });
-    legend.onAdd = () => {
-      const div = L.DomUtil.create("div", "legend");
-      div.innerHTML = `
-        <div class="legend-item"><div class="legend-color" style="background: red; opacity:0.5;"></div> Area of Interest</div>
-        <div class="legend-item"><div class="legend-color" style="background: blue;"></div> Geodata Valid</div>
-        <div class="legend-item"><div class="legend-color" style="background: white; border:1px solid black;"></div> Drop (status)</div>`;
-      return div;
-    };
+  const legend = L.control({ position: "bottomleft" });
+
+  // simpan drop layers
+  const dropLayers = [];
+
+  function updateLegend() {
+    const div = L.DomUtil.create("div", "legend");
+    let html = "<b>Keterangan</b><br>";
+
+    if (aoiLayer && map.hasLayer(aoiLayer)) {
+      html += `<div class="legend-item"><div class="legend-color" style="background: red; opacity:0.5;"></div> Area of Interest</div>`;
+    }
+    if (validLayer && map.hasLayer(validLayer)) {
+      html += `<div class="legend-item"><div class="legend-color" style="background: blue;"></div> Geodata Valid</div>`;
+    }
+    if (dropLayers.some(dl => map.hasLayer(dl.layer))) {
+        html += `<div class="legend-item"><div class="legend-color" style="background: white; border:1px solid black;"></div> Geodata Drop</div>`;
+    }
+
+    div.innerHTML = html || "<i>Tidak ada layer aktif</i>";
+    return div;
+  }
+
+  legend.onAdd = updateLegend;
+  legend.addTo(map);
+
+  // update setiap ada perubahan layer
+  map.on("overlayadd overlayremove", () => {
+    legend.remove();
+    legend.onAdd = updateLegend;
     legend.addTo(map);
+  });
+
+  // Modifikasi fungsi addDrop agar simpan referensi dropLayers
+  function addDrop() {
+    return fetch(dropUrl).then(res => res.json()).then(data => {
+      const groups = {};
+      data.features.forEach(f => {
+        const status = f.properties.STATUS ? f.properties.STATUS.toLowerCase() : "tanpa status";
+        if (!groups[status]) groups[status] = [];
+        groups[status].push(f);
+      });
+      Object.keys(groups).forEach(status => {
+        const layer = L.geoJSON(
+        { type: "FeatureCollection", features: groups[status] },
+        { style: dropStyle }
+      );
+        layerControl.addOverlay(layer, `Drop - ${status}`);
+        layer.bringToBack();
+        dropLayers.push({ layer, status }); // simpan referensi + status
+      });
+    });
+  }
   </script>
 </body>
 </html>
