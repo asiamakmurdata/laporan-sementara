@@ -10,6 +10,23 @@
     body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
     #map { flex: 1; width: 100%; }
     .legend {
+  position: absolute;
+  bottom: 20px; left: 10px;
+  background: white; padding: 6px 12px;
+  border-radius: 4px; font-size: 14px;
+  min-width: 160px; white-space: nowrap;
+  font-family: "Roboto Mono", monospace;
+  font-size: 10px;
+  display: none;
+}
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.legend-content { margin-top: 6px; }
+.legend.collapsed .legend-content { display: none; }
       position: absolute;
       bottom: 20px; left: 10px;
       background: white; padding: 6px 12px;
@@ -40,9 +57,30 @@
       font-family: "Roboto Mono", monospace;
       font-size: 10px;
     }
+      .leaflet-control-layers {
+    font-family: "Roboto Mono", monospace;
+    font-size: 10px;
+  }
 
     /* Responsive legend scaling for mobile */
-    @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+    @media (max-width: 768px) { .legend {
+  position: absolute;
+  bottom: 20px; left: 10px;
+  background: white; padding: 6px 12px;
+  border-radius: 4px; font-size: 14px;
+  min-width: 160px; white-space: nowrap;
+  font-family: "Roboto Mono", monospace;
+  font-size: 10px;
+  display: none;
+}
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.legend-content { margin-top: 6px; }
+.legend.collapsed .legend-content { display: none; } transform: scale(0.6); transform-origin: bottom left; } }
     @media (max-width: 768px) {
       .leaflet-control-layers {
         font-size: 8px;       /* perkecil font */
@@ -257,7 +295,18 @@
     const legend = L.control({ position: "bottomleft" });
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "legend");
-      div.innerHTML = `<div id="legend-content"></div>`;
+      div.innerHTML = `
+        <div class="legend-header">
+          <span class="legend-title" style="font-size:10px; font-weight:bold;">Keterangan</span>
+          <span class="legend-toggle" style="font-size:10px;">[-]</span>
+        </div>
+        <div class="legend-content" id="legend-content"></div>
+      `;
+      div.querySelector(".legend-header").onclick = () => {
+        div.classList.toggle("collapsed");
+        const toggleBtn = div.querySelector(".legend-toggle");
+        toggleBtn.textContent = div.classList.contains("collapsed") ? "[+]" : "[-]";
+      };
       return div;
     };
     legend.addTo(map);
@@ -268,9 +317,7 @@
       if (!content) return;
       let html = "";
 
-      if (map.hasLayer(aoiLayer) || map.hasLayer(validLayer) || map.hasLayer(supplyLayer) || map.hasLayer(arcAM) || map.hasLayer(subCollectorGroup) || map.hasLayer(localBuyerGroup)) {
-        html += `<div style=\"font-weight:bold; margin-bottom:4px;\">Keterangan</div>`;
-      }
+       
 
       if (map.hasLayer(aoiLayer)) {
         html += `<div class=\"legend-item\"><div class=\"legend-color-box legend-aoi\" style="background: red; opacity:0.2;"></div> Area of Interest</div>`;

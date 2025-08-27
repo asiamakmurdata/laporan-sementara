@@ -7,6 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
 <style>
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.legend-content { margin-top: 6px; }
+.legend.collapsed .legend-content { display: none; }
 body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
 #map { flex: 1; width: 100%; }
 .legend { position: absolute; bottom: 20px; left: 10px; background: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; min-width: 220px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-family: "Roboto Mono", monospace; }
@@ -67,15 +75,15 @@ const MIN_START_ZOOM = 11;
 const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true, zoomSnap: 1, zoomDelta: 1 }).setView([-5.5, 105.3], 6);
 
 // Basemaps
-const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, noWrap: true }).addTo(map);
-const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", noWrap: true });
+const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, noWrap: true });
+const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", noWrap: true }).addTo(map);
 
 const baseMaps = { "OSM Standar": osm, "Citra Satelit (Esri)": satellite };
 
 // Layer Groups
 const aoiGroup = L.layerGroup().addTo(map);
 const kebunGroup = L.layerGroup().addTo(map);
-const risikoGroup = L.layerGroup();
+const risikoGroup = L.layerGroup().addTo(map);
 const gfc2020Group = L.layerGroup();
 const jrcTMFGroup = L.layerGroup();
 const gladGroup = L.layerGroup();
@@ -154,6 +162,20 @@ map.on('layeradd', ensureSeparators);
 const legend = L.control({ position: "bottomleft" });
 legend.onAdd = () => {
   const div = L.DomUtil.create("div", "legend");
+  div.innerHTML = `
+    <div class="legend-header">
+      <span class="legend-title">Keterangan</span>
+      <span class="legend-toggle">[-]</span>
+    </div>
+    <div class="legend-content"></div>
+  `;
+
+  div.querySelector(".legend-header").onclick = () => {
+    div.classList.toggle("collapsed");
+    const toggleBtn = div.querySelector(".legend-toggle");
+    toggleBtn.textContent = div.classList.contains("collapsed") ? "[+]" : "[-]";
+  };
+
   div.style.display = "none";
   return div;
 };
@@ -218,8 +240,10 @@ if (map.hasLayer(kopiGroup)) activeLayers.push('<div class="legend-item"><div cl
 }
 
   const div = document.querySelector(".legend");
+  if (!div) return;
+  const content = div.querySelector(".legend-content");
   if (activeLayers.length > 0) {
-    div.innerHTML = `<div class="legend-title">Keterangan</div>` + activeLayers.join("");
+    content.innerHTML = activeLayers.join("");
     div.style.display = "block";
   } else {
     div.style.display = "none";

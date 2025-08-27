@@ -34,11 +34,12 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     .legend-header {
-      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       cursor: pointer;
-      margin-bottom: 4px;
     }
-    .legend-content { display: block; }
+    .legend-content { margin-top: 6px; }
     .legend.collapsed .legend-content { display: none; }
 
     .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
@@ -164,22 +165,21 @@
     const legend = L.control({ position: "bottomleft" });
 
     function createLegend() {
-      const div = L.DomUtil.create("div", "legend collapsed");
+      const div = L.DomUtil.create("div", "legend");
 
       const header = L.DomUtil.create("div", "legend-header", div);
-      header.innerHTML = "Keterangan ▸";
+      header.innerHTML = `
+        <span class="legend-title" style="font-size:10px; font-weight:bold;">Keterangan</span>
+        <span class="legend-toggle" style="font-size:10px;">[-]</span>
+      `;
 
       const content = L.DomUtil.create("div", "legend-content", div);
       content.innerHTML = updateLegendHTML();
 
       header.onclick = function () {
-        if (div.classList.contains("collapsed")) {
-          div.classList.remove("collapsed");
-          header.innerHTML = "Keterangan ▾";
-        } else {
-          div.classList.add("collapsed");
-          header.innerHTML = "Keterangan ▸";
-        }
+        div.classList.toggle("collapsed");
+        const toggleBtn = header.querySelector(".legend-toggle");
+        toggleBtn.textContent = div.classList.contains("collapsed") ? "[+]" : "[-]";
       };
 
       return div;
