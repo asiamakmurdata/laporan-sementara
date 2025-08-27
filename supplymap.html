@@ -15,6 +15,13 @@
       background: white; padding: 6px 12px;
       border-radius: 4px; font-size: 14px;
       min-width: 160px; white-space: nowrap;
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+      display: none; /* default tersembunyi */
+    }
+    .leaflet-control-layers {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
     }
     .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
     .legend-color-box { width: 20px; height: 20px; margin-right: 8px; }
@@ -24,9 +31,26 @@
     .legend-valid { background: blue; border: 1px solid blue; }
 
     /* Responsive legend scaling for mobile */
-    @media (max-width: 768px) {
+    /* @media (max-width: 768px) {
       .legend { transform: scale(0.5); transform-origin: bottom left; }
-    }
+    } */
+     @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+@media (max-width: 768px) {
+  .leaflet-control-layers {
+    font-size: 8px;       /* perkecil font */
+    padding: 2px 4px;      /* lebih rapat */
+  }
+  .leaflet-control-layers-overlays label {
+    font-size: 8px;       /* teks overlay lebih kecil */
+    line-height: 1.1em;
+  }
+  .leaflet-control-layers-overlays input[type="checkbox"] {
+    transform: scale(0.8); /* perkecil checkbox */
+    margin-top: 1px;
+  }
+  .leaflet-control-layers-label {
+    font-size: 8px;       /* juga perkecil label pemisah */
+  }
   </style>
 </head>
 <body>
@@ -53,7 +77,12 @@
     const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
     let aoiLayer, validLayer, supplyLayer;
-    const MIN_START_ZOOM = 10;
+    let arcAM, subCollectorGroup, localBuyerGroup;
+     // zoom minimal default
+    let MIN_START_ZOOM = 10;
+    if (window.innerWidth <= 768) {
+      MIN_START_ZOOM = 9; // versi HP pakai 12
+    }
 
     function addAOI() {
       return fetch(aoiUrl).then(res => res.json()).then(data => {
@@ -110,12 +139,10 @@
             if (popupContent) layer.bindPopup(popupContent);
           }
         }).addTo(map);
-        // sesuaikan restriction map agar include titik rantai pasokan
         const combinedBounds = supplyLayer.getBounds().extend(aoiLayer.getBounds());
         map.fitBounds(combinedBounds, { padding: [24,24], maxZoom: MIN_START_ZOOM });
         map.setMaxBounds(combinedBounds);
 
-        // jika mobile, fokus ke tengah AOI
         if (window.innerWidth <= 768) {
           const centerAOI = aoiLayer.getBounds().getCenter();
           map.setView(centerAOI, MIN_START_ZOOM);
@@ -144,21 +171,19 @@
         { nama: "Sunarti", coord: [-5.422396, 104.457501] }
       ];
 
-      // Arc line Asia Makmur → Mujur Jaya (Kolektor → Eksportir)
       const midLatAM = (asiaMakmur[0] + mujurJaya[0]) / 2 + 0.1;
       const midLngAM = (asiaMakmur[1] + mujurJaya[1]) / 2;
-      const arcAM = L.curve(
+      arcAM = L.curve(
         [ 'M', asiaMakmur, 'Q', [midLatAM, midLngAM], mujurJaya ],
         { color: 'black', weight: 3, dashArray: '5,5' }
       ).addTo(map);
       layerControl.addOverlay(arcAM, "Kolektor → Eksportir");
 
-      // Group arcs Mujur Jaya → Sub Kolektor
-      const subCollectorGroup = L.layerGroup();
+      subCollectorGroup = L.layerGroup();
       tujuan.forEach(dest => {
         const midLat = (mujurJaya[0] + dest.coord[0]) / 2 + 0.1;
         const midLng = (mujurJaya[1] + dest.coord[1]) / 2;
-        const arc = L.curve(
+        L.curve(
           [ 'M', mujurJaya, 'Q', [midLat, midLng], dest.coord ],
           { color: 'black', weight: 2, dashArray: '4,4' }
         ).addTo(subCollectorGroup);
@@ -166,19 +191,18 @@
       subCollectorGroup.addTo(map);
       layerControl.addOverlay(subCollectorGroup, "Sub kolektor → Kolektor");
 
-      // Group arcs Pembeli Lokal → Sub kolektor
-      const localBuyerGroup = L.layerGroup();
+      localBuyerGroup = L.layerGroup();
 
       const midLatT = (sarwoEdi[0] + tasin[0]) / 2 + 0.05;
       const midLngT = (sarwoEdi[1] + tasin[1]) / 2;
-      const arcT = L.curve(
+      L.curve(
         [ 'M', sarwoEdi, 'Q', [midLatT, midLngT], tasin ],
         { color: 'black', weight: 2, dashArray: '4,4' }
       ).addTo(localBuyerGroup);
 
       const midLatS = (sarwoEdi[0] + supriyanto[0]) / 2 + 0.05;
       const midLngS = (sarwoEdi[1] + supriyanto[1]) / 2;
-      const arcS = L.curve(
+      L.curve(
         [ 'M', sarwoEdi, 'Q', [midLatS, midLngS], supriyanto ],
         { color: 'black', weight: 2, dashArray: '4,4' }
       ).addTo(localBuyerGroup);
@@ -186,7 +210,7 @@
       const customCoord = [-5.371681, 104.476637];
       const midLatC = (sarwoEdi[0] + customCoord[0]) / 2 + 0.05;
       const midLngC = (sarwoEdi[1] + customCoord[1]) / 2;
-      const arcC = L.curve(
+      L.curve(
         [ 'M', sarwoEdi, 'Q', [midLatC, midLngC], customCoord ],
         { color: 'black', weight: 2, dashArray: '4,4' }
       ).addTo(localBuyerGroup);
@@ -194,7 +218,7 @@
       const customEka = [-5.240707, 104.2382976];
       const midLatE = (ekaSaputra[0] + customEka[0]) / 2 + 0.05;
       const midLngE = (ekaSaputra[1] + customEka[1]) / 2;
-      const arcE = L.curve(
+      L.curve(
         [ 'M', ekaSaputra, 'Q', [midLatE, midLngE], customEka ],
         { color: 'black', weight: 2, dashArray: '4,4' }
       ).addTo(localBuyerGroup);
@@ -202,7 +226,7 @@
       const customBuyung = [-4.8099852, 103.9234496];
       const midLatB = (buyung[0] + customBuyung[0]) / 2 + 0.05;
       const midLngB = (buyung[1] + customBuyung[1]) / 2;
-      const arcB = L.curve(
+      L.curve(
         [ 'M', buyung, 'Q', [midLatB, midLngB], customBuyung ],
         { color: 'black', weight: 2, dashArray: '4,4' }
       ).addTo(localBuyerGroup);
@@ -214,21 +238,55 @@
     const script = document.createElement('script');
     script.src = "https://unpkg.com/leaflet-curve";
     script.onload = () => {
-      addAOI().then(addValid).then(addSupply).then(addArcLines);
+      addAOI().then(addValid).then(addSupply).then(addArcLines).then(() => updateLegend());
     };
     document.head.appendChild(script);
 
     const legend = L.control({ position: "bottomleft" });
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "legend");
-      div.innerHTML = `
-        <div class="legend-item"><div class="legend-color-box legend-aoi"></div> Area of Interest</div>
-        <div class="legend-item"><div class="legend-color-box legend-valid"></div> Kebun Pemasok</div>
-        <div class="legend-item"><div class="legend-marker"></div> Titik Rantai Pasokan</div>
-        <div class="legend-item"><div class="legend-line"></div> Jalur Distribusi</div>`;
+      div.innerHTML = `<div id="legend-content"></div>`;
       return div;
     };
     legend.addTo(map);
+
+    function updateLegend() {
+      const legendBox = document.querySelector(".legend");
+      const content = document.getElementById("legend-content");
+      if (!content) return;
+      let html = "";
+
+      if (map.hasLayer(aoiLayer) || map.hasLayer(validLayer) || map.hasLayer(supplyLayer) || map.hasLayer(arcAM) || map.hasLayer(subCollectorGroup) || map.hasLayer(localBuyerGroup)) {
+        html += `<div style=\"font-weight:bold; margin-bottom:4px;\">Keterangan</div>`;
+      }
+
+      if (map.hasLayer(aoiLayer)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-color-box legend-aoi\" style="background: red; opacity:0.2;"></div> Area of Interest</div>`;
+      }
+      if (map.hasLayer(validLayer)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-color-box legend-valid\ style="background: blue; opacity:0.6;"></div> Kebun Pemasok</div>`;
+      }
+      if (map.hasLayer(supplyLayer)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-marker\"></div> Titik Rantai Pasokan</div>`;
+      }
+
+      if (map.hasLayer(arcAM) || map.hasLayer(subCollectorGroup) || map.hasLayer(localBuyerGroup)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-line\"></div> Jalur Distribusi</div>`;
+      }
+
+      content.innerHTML = html;
+
+      // tampilkan / sembunyikan kotak legend sesuai isi
+      if (html.trim() === "") {
+        legendBox.style.display = "none";
+      } else {
+        legendBox.style.display = "block";
+      }
+    }
+
+    map.on("overlayadd", updateLegend);
+    map.on("overlayremove", updateLegend);
+    map.whenReady(updateLegend);
   </script>
 </body>
 </html>
