@@ -1,133 +1,318 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
-  <style>
-    body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
-    #map { flex: 1; width: 100%; }
-    .legend {
-      position: absolute;
-      bottom: 20px; left: 10px;
-      background: white; padding: 6px 12px;
-      border-radius: 4px; font-size: 14px;
-      min-width: 200px; white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    .legend-item { display: flex; align-items: center; margin-bottom: 6px; }
-    .legend-color { width: 18px; height: 18px; margin-right: 8px; border: 1px solid #555; }
-    @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
+<style>
+body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
+#map { flex: 1; width: 100%; }
+.legend { position: absolute; bottom: 20px; left: 10px; background: white; padding: 6px 12px; border-radius: 4px; font-size: 13px; min-width: 220px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-family: "Roboto Mono", monospace; }
+.legend-title { font-weight: bold; margin-bottom: 6px; font-size: 13px; }
+.legend-subtitle { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+.legend-item { display: flex; align-items: center; margin-bottom: 4px; font-size: 13px; }
+/* .legend-color { width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; border: 1px solid #555; } */
+/* default kotak */
+.legend-color { 
+  width: 14px; 
+  height: 14px; 
+  margin-right: 8px; 
+  border: 1px solid #555; 
+  border-radius: 2px; /* kotak */
+}
+
+/* khusus Penilaian Risiko */
+.legend-color.circle {
+  border-radius: 50%; /* bulat */
+}
+.legend-text { flex: 1; line-height: 1.2em; }
+.leaflet-control-layers { font-family: "Roboto Mono", monospace; font-size: 13px; }
+.leaflet-control-layers-overlays label { display: flex; align-items: flex-start; white-space: normal; line-height: 1.2em; }
+.leaflet-control-layers-overlays input[type="checkbox"] { margin-top: 2px; }
+.leaflet-control-layers-overlays .layer-text { margin-left: 6px; }
+.leaflet-control-layers-label { font-weight: bold; margin: 6px 0 4px; }
+hr.layer-separator { border: none; border-top: 1px solid #ccc; margin: 6px 0; }
+@media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+@media (max-width: 768px) {
+  .leaflet-control-layers {
+    font-size: 11px;       /* perkecil font */
+    padding: 2px 4px;      /* lebih rapat */
+  }
+  .leaflet-control-layers-overlays label {
+    font-size: 11px;       /* teks overlay lebih kecil */
+    line-height: 1.1em;
+  }
+  .leaflet-control-layers-overlays input[type="checkbox"] {
+    transform: scale(0.8); /* perkecil checkbox */
+    margin-top: 1px;
+  }
+  .leaflet-control-layers-label {
+    font-size: 11px;       /* juga perkecil label pemisah */
+  }
+}
+
+</style>
 </head>
 <body>
-  <div id="map"></div>
+<div id="map"></div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-gesture-handling"></script>
-  <script>
-    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 6);
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-gesture-handling"></script>
+<script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
 
-    // Basemaps
-    const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
-    }).addTo(map);
-    const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-      attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
-    });
-    const baseMaps = { "OSM Standar": osm, "Citra Satelit (Esri)": satellite };
-    const layerControl = L.control.layers(baseMaps).addTo(map);
+<script>
+const MIN_START_ZOOM = 11;
+const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true, zoomSnap: 1, zoomDelta: 1 }).setView([-5.5, 105.3], 6);
 
-    // AOI
-    const aoiUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/Map_Animasi/main/AOI.geojson";
-    const defaultStyle = { color: "red", weight: 2, fillOpacity: 0.2 };
-    const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
-    let aoiLayer, validLayer;
-    const MIN_START_ZOOM = 10;
+// Basemaps
+const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, noWrap: true }).addTo(map);
+const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", noWrap: true });
 
-    function addAOI() {
-      return fetch(aoiUrl).then(res => res.json()).then(data => {
-        aoiLayer = L.geoJSON(data, {
-          style: defaultStyle,
-          onEachFeature: (feature, layer) => {
-            let popupContent = "";
-            if (feature.properties) {
-              popupContent = Object.entries(feature.properties)
-                .filter(([k]) => k && k.toLowerCase() !== "area")
-                .map(([k, v]) => `<b>${k}:</b> ${v}`)
-                .join("<br>");
-            }
-            if (popupContent) layer.bindPopup(popupContent);
-            layer.on({
-              mouseover: e => e.target.setStyle(highlightStyle),
-              mouseout: e => aoiLayer.resetStyle(e.target)
-            });
-          }
-        }).addTo(map);
-        map.fitBounds(aoiLayer.getBounds(), { padding: [24,24], maxZoom: MIN_START_ZOOM });
-        map.setMaxBounds(aoiLayer.getBounds());
-        layerControl.addOverlay(aoiLayer, "Area of Interest");
-        aoiLayer.bringToBack();
-      });
+const baseMaps = { "OSM Standar": osm, "Citra Satelit (Esri)": satellite };
+
+// Layer Groups
+const aoiGroup = L.layerGroup().addTo(map);
+const kebunGroup = L.layerGroup().addTo(map);
+const risikoGroup = L.layerGroup();
+const gfc2020Group = L.layerGroup();
+const jrcTMFGroup = L.layerGroup();
+const gladGroup = L.layerGroup();
+const alertGroup = L.layerGroup();
+const kopiGroup = L.layerGroup();
+const simontiniGroup = L.layerGroup();
+const wdpaGroup = L.layerGroup();
+
+// Raster layers
+const gfc2020Layer = L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/iforce/gfc2020/wms.py?", { layers: "gfc2020_v2", format: "image/png", transparent: true, opacity: 0.6 });
+gfc2020Group.addLayer(gfc2020Layer);
+
+const gladLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/510793ad-e545-499a-9903-b40c066cc0ff/raster/timestamp/d8ecf7af-3ac2-4af2-b36f-34445f2c1217/tile/{z}/{x}/{y}?style=eac2ab85-41e1-4cb9-ab21-73b95da52c7d&token=epat_sjKBq4EdmRVDy8a6GwWe8hEYIbSwDlZbAFM3KiySpvt8PxzvYD4YsZUufBvYDqP4", { transparent: true, opacity: 0.6 });
+gladGroup.addLayer(gladLayer);
+
+const jrcTMFLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/5f99cd31-7885-4ae2-8a76-547a43ca558a/raster/timestamp/2c608ad5-73a2-4af2-b36f-34445f2c1217/tile/{z}/{x}/{y}?style=77325c09-be36-4726-a1c4-91471d68d77f&token=epat_KJRJ1jgS47R4FdAVoaYHoAGg5icDFEtlXMzMJyxxWYGBPTaNrTB8rcDESnqL4S85", { transparent: true, opacity: 0.6 });
+jrcTMFGroup.addLayer(jrcTMFLayer);
+
+const alertLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/ca08dc6e-198e-41c8-9e3d-a6e7e4abbbce/raster/timestamp/94aabaa2-2b8d-49a6-a76e-e4a2ffd62ce6/tile/{z}/{x}/{y}?style=8656078b-77ed-438e-ad42-d531129929a3&token=epat_jPYUO87B0TBzjHZLxG1xfXSobv8XWu5jtQObvUCAuitBNRVRCZGiSyM9du2hnnTV", { transparent: true, opacity: 0.6 });
+alertGroup.addLayer(alertLayer);
+
+const kopiLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/9d476235-2180-4885-b43e-95fffc99f987/raster/timestamp/31ff9287-5bf2-40e6-b3b5-d0d7c0754ac1/tile/{z}/{x}/{y}?style=12bd57fe-9d85-485c-8b8f-51a57de8977f&token=epat_y87AbkigisVthjOyuJwE19WNCVnrT1jIGz1peyPBKQSW82CKoHaI0jbW8zEL1OWW", { transparent: true, opacity: 0.6 });
+kopiGroup.addLayer(kopiLayer);
+
+// Fungsi Kawasan Hutan
+const simontiniLayer = L.tileLayer.wms("https://aws.simontini.id/geoserver/wms", {
+  layers: "simontini:Forest_estate_adm",
+  format: "image/png",
+  transparent: true,
+  opacity: 0.7
+});
+simontiniGroup.addLayer(simontiniLayer);
+
+// Ambil data dari ArcGIS REST FeatureServer
+// const wdpaGroup.addLayer = L.esri.featureLayer({
+//       url: "https://services5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_v0/FeatureServer/1",
+//       style: { color: "darkred", weight: 1, fillOpacity: 0.2 }
+//     });
+
+
+// Overlay Layers
+const overlayLayers = {
+  "Area of Interest": aoiGroup,
+  "Kebun Pemasok": kebunGroup,
+  "Penilaian Risiko": risikoGroup,
+  "Tutupan Hutan Global (GFC 2020 v2 EU JRC)": gfc2020Group,
+  "Deforestasi (TMF 2024 EU JRC)": jrcTMFGroup,
+  "Kehilangan Tutupan Pohon (UMD GLAD 2024 v1.12)": gladGroup,
+  "Peringatan Gangguan Hutan (GFW 2025)": alertGroup,
+  "Perkebunan Kopi (Fardinatri, et al)": kopiGroup,
+  "Fungsi Kawasan Hutan (KLHK)": simontiniGroup,
+  "Protected Areas (WDPA)": wdpaGroup
+};
+
+const layerControl = L.control.layers(baseMaps, overlayLayers, { collapsed: true }).addTo(map);
+
+function ensureSeparators() {
+  const control = document.querySelector('.leaflet-control-layers-overlays');
+  if (!control) return;
+  const labels = Array.from(control.querySelectorAll('label'));
+
+  if (!control.querySelector('.lapisan-utama')) {
+    const gfcLabel = labels.find(l => l.textContent.includes('Tutupan Hutan Global'));
+    if (gfcLabel) gfcLabel.insertAdjacentHTML('beforebegin', "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-utama'>Lapisan Utama</div>");
+  }
+  if (!control.querySelector('.lapisan-pendukung')) {
+    const kopiLabel = labels.find(l => l.textContent.includes('Perkebunan Kopi'));
+    if (kopiLabel) kopiLabel.insertAdjacentHTML('beforebegin', "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-pendukung'>Lapisan Pendukung</div>");
+  }
+}
+
+map.whenReady(ensureSeparators);
+map.on('layeradd', ensureSeparators);
+
+// Legend
+const legend = L.control({ position: "bottomleft" });
+legend.onAdd = () => {
+  const div = L.DomUtil.create("div", "legend");
+  div.style.display = "none";
+  return div;
+};
+legend.addTo(map);
+
+function updateLegend() {
+  const activeLayers = [];
+  if (map.hasLayer(aoiGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: red; opacity:0.2;"></div><div class="legend-text">Area of Interest</div></div>');
+  if (map.hasLayer(kebunGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: blue;"></div><div class="legend-text">Kebun Pemasok</div></div>');
+
+
+  if (map.hasLayer(gfc2020Group)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div><div class="legend-text">Tutupan Hutan Global</div></div>');
+if (map.hasLayer(kopiGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: #6F4E37; opacity:0.6;"></div><div class="legend-text">Perkebunan Kopi Tanggamus</div></div>');
+
+  if (map.hasLayer(jrcTMFGroup) || map.hasLayer(gladGroup)) {
+  let subtitle = "Deforestasi/Kehilangan Tutupan Pohon";
+  if (map.hasLayer(jrcTMFGroup) && !map.hasLayer(gladGroup)) {
+    subtitle = "Deforestasi (TMF)";
+  } else if (!map.hasLayer(jrcTMFGroup) && map.hasLayer(gladGroup)) {
+    subtitle = "Kehilangan Tutupan Pohon (GLAD)";
+  }
+
+  activeLayers.push(`
+    <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
+      <div class="legend-subtitle">${subtitle}</div>
+      <div class="legend-item"><div class="legend-color" style="background:#AA0000;"></div><div class="legend-text">2024</div></div>
+      <div class="legend-item"><div class="legend-color" style="background:#FF0000;"></div><div class="legend-text">2023</div></div>
+      <div class="legend-item"><div class="legend-color" style="background:#FF5353;"></div><div class="legend-text">2022</div></div>
+      <div class="legend-item"><div class="legend-color" style="background:#FFA5A5;"></div><div class="legend-text">2021</div></div>
+      <div class="legend-item"><div class="legend-color" style="background:#FFCCCC;"></div><div class="legend-text">≤2020</div></div>
+    </div>
+  `);
+}
+
+
+  if (map.hasLayer(alertGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: black; opacity:1;"></div><div class="legend-text">Peringatan Gangguan Hutan (GFW)</div></div>');
+  
+  if (map.hasLayer(simontiniGroup)) {
+    activeLayers.push(`
+      <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
+        <div class="legend-subtitle">Fungsi Kawasan Hutan</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ADA3FF; opacity:0.7"></div><div class="legend-text">Kawasan Konservasi</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#4CE600; opacity:0.7"></div><div class="legend-text">Hutan Lindung</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FFFF73; opacity:0.7"></div><div class="legend-text">Hutan Produksi</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#A3FF73; opacity:0.7"></div><div class="legend-text">Hutan Produksi Terbatas</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FFFFFF; opacity:0.7"></div><div class="legend-text">Areal Penggunaan Lain</div></div>
+      </div>
+    `);
+  }
+
+  if (map.hasLayer(wdpaGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: darkred; opacity:0.4;"></div><div class="legend-text">Protected Areas (WDPA)</div></div>');
+
+  if (map.hasLayer(risikoGroup)) {
+  activeLayers.push(`
+    <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
+      <div class="legend-subtitle">Penilaian Risiko</div>
+      <div class="legend-item"><div class="legend-color circle" style="background:#007bff;"></div><div class="legend-text">Rendah</div></div>
+      <div class="legend-item"><div class="legend-color circle" style="background:#dc3545;"></div><div class="legend-text">Tinggi</div></div>
+      <div class="legend-item"><div class="legend-color circle" style="background: grey;"></div><div class="legend-text">Butuh Informasi Lanjutan</div></div>
+    </div>
+  `);
+}
+
+  const div = document.querySelector(".legend");
+  if (activeLayers.length > 0) {
+    div.innerHTML = `<div class="legend-title">Keterangan</div>` + activeLayers.join("");
+    div.style.display = "block";
+  } else {
+    div.style.display = "none";
+  }
+}
+
+// AOI Layer
+fetch("https://raw.githubusercontent.com/RUMAH-PETAni/Map_Animasi/main/AOI.geojson").then(res => res.json()).then(data => {
+  const layer = L.geoJSON(data, { color: "red", weight: 2, fillOpacity: 0.2 });
+  aoiGroup.clearLayers().addLayer(layer);
+  map.fitBounds(layer.getBounds(), { padding: [24,24], maxZoom: MIN_START_ZOOM });
+  map.setMaxBounds(layer.getBounds());
+  updateLegend();
+});
+
+// Kebun Pemasok
+fetch("https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Valid.geojson").then(res => res.json()).then(data => {
+  const layer = L.geoJSON(data, {
+    color: "blue",
+    weight: 2,
+    fillOpacity: 0.4,
+    onEachFeature: function (feature, lyr) {
+      const p = feature.properties || {};
+      const uid = p.UID_KEBUN ?? "-";
+      const luas = Number(p.LUAS_HA ?? 0);
+      lyr.bindPopup(`<b>UID Kebun:</b> ${uid}<br/><b>Luas (ha):</b> ${luas.toFixed(2)}`);
     }
+  });
+  kebunGroup.clearLayers().addLayer(layer);
+  updateLegend();
+});
 
-    // Kebun Pemasok
-    const validUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Valid.geojson";
-    const validStyle = { color: "blue", weight: 2, fillOpacity: 0.4 };
 
-    function addValid() {
-      return fetch(validUrl).then(res => res.json()).then(data => {
-        validLayer = L.geoJSON(data, { 
-          style: validStyle,
-          onEachFeature: (feature, layer) => {
-            const p = feature.properties || {};
-            let uid = p.UID_KEBUN || "Tidak ada UID";
-            let luas = (p.LUAS_HA !== undefined && p.LUAS_HA !== null && !isNaN(Number(p.LUAS_HA)))
-              ? Number(p.LUAS_HA).toFixed(2)
-              : "Tidak ada data";
-            let group = (p.GROUP_ !== undefined && p.GROUP_ !== null) ? String(p.GROUP_) : "Tidak ada data";
-            group = group.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+// === WDPA pakai Esri FeatureLayer ===
+const wdpaLayer = L.esri.featureLayer({
+url: "https://services5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_v0/FeatureServer/1",
+style: {
+color: "darkred",
+weight: 1,
+fillColor: "darkred",
+fillOpacity: 0.2
+}
+});
+wdpaGroup.clearLayers().addLayer(wdpaLayer);
+// panggil update legend saat overlay berubah
+map.on("overlayadd", updateLegend);
+map.on("overlayremove", updateLegend);
 
-            let tooltipContent = `<b>UID Kebun:</b> ${uid}<br><b>Luas (ha):</b> ${luas}<br><b>Group:</b> ${group}`;
 
-            layer.on("click", () => {
-              layer.bindTooltip(tooltipContent, {
-                permanent: false,
-                direction: "top",
-                sticky: true
-              }).openTooltip();
-            });
-          }
-        }).addTo(map);
-        layerControl.addOverlay(validLayer, "Kebun Pemasok");
-      });
-    }
 
-    addAOI().then(addValid);
+function risikoStyle(risiko) {
+  if (!risiko) return {};
+  const r = risiko.toString().trim().toLowerCase();
+  let color = "#007bff"; // default Rendah
+  if (r === "tinggi" || r === "high") color = "#dc3545";
+  else if (r === "butuh informasi lanjutan" || r === "info") color = "grey";
 
-    // ==== JRC Global Forest Cover 2020 v2 WMS ====
-    const gfc2020v2 = L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/iforce/gfc2020/wms.py?", {
-      layers: "gfc2020_v2",
-      format: "image/png",
-      transparent: true,
-      attribution: "EU JRC - Global Forest Cover 2020 v2",
-      opacity: 0.6
+  return {
+    radius: 7,
+    fillColor: color,
+    color: "#fff",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.9
+  };
+}
+
+
+
+fetch("https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Risk.geojson")
+  .then(res => res.json())
+  .then(data => {
+    const layer = L.geoJSON(data, {
+      pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, risikoStyle(feature.properties.RISIKO));
+      },
+      onEachFeature: function (feature, lyr) {
+        const p = feature.properties || {};
+        if (p.RISIKO) {
+          lyr.bindPopup(`<b>Penilaian Risiko:</b> ${p.RISIKO}`);
+        }
+      }
     });
-    layerControl.addOverlay(gfc2020v2, "Global Forest Cover 2020 v2 (EU JRC)");
+    risikoGroup.clearLayers().addLayer(layer);
+    updateLegend();
+  });
 
-    // Legend
-    const legend = L.control({ position: "bottomleft" });
-    legend.onAdd = () => {
-      const div = L.DomUtil.create("div", "legend");
-      div.innerHTML = `
-        <div class="legend-item"><div class="legend-color" style="background: red; opacity:0.5;"></div> Area of Interest</div>
-        <div class="legend-item"><div class="legend-color" style="background: blue;"></div> Kebun Pemasok</div>
-        <div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div> GFC2020 v2 (EU JRC)</div>`;
-      return div;
-    };
-    legend.addTo(map);
-  </script>
+// Update legend on overlay add/remove
+map.on("overlayadd", updateLegend);
+map.on("overlayremove", updateLegend);
+
+// Initial call
+updateLegend();
+</script>
 </body>
 </html>

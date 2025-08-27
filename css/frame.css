@@ -826,6 +826,13 @@ ol.nested > li:before {
   border: 1px solid #666666;
   margin: 15px 0;
 }
+.iframe-in-banner {
+  width: 100%;
+  height: auto;
+  /* border: 1px solid #666666; */
+  /* margin: 15px 0; */
+  overflow-y: hidden; 
+}
 
 .iframe-in-body2 {
   width: 100%;
