@@ -76,7 +76,7 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-gesture-handling"></script>
   <script>
-    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 6);
+    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 12);
 
     const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
@@ -93,8 +93,8 @@
     const defaultStyle = { color: "red", weight: 2, fillOpacity: 0.2 };
     const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
-    let aoiLayer, validLayer;
-    const MIN_START_ZOOM = 11;
+    let aoiLayer;
+    const MIN_START_ZOOM = 12;
 
     function addAOI() {
       return fetch(aoiUrl).then(res => res.json()).then(data => {
@@ -107,7 +107,19 @@
                 .filter(([k]) => k && k.toLowerCase() !== "area")
                 .map(([k, v]) => `<b>${k}:</b> ${v}`)
                 .join("<br>");
+
+              // Tambahkan teks khusus untuk kecamatan tertentu
+              if (feature.properties.Kecamatan === "Bandar Negeri Semuong") {
+                popupContent += "<br><i>Perkebunan Kopi: 1.562 ha</i>";
+              }
+              if (feature.properties.Kecamatan === "Semaka") {
+                popupContent += "<br><i>Perkebunan Kopi: 1.253 ha</i>";
+              }
+              if (feature.properties.Kecamatan === "Wonosobo") {
+                popupContent += "<br><i>Perkebunan Kopi: 1.172 ha</i>";
+              }
             }
+
             if (popupContent) layer.bindPopup(popupContent);
             layer.on({
               mouseover: e => e.target.setStyle(highlightStyle),
@@ -122,54 +134,24 @@
       });
     }
 
-    // Geodata Valid
-    const validUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Valid.geojson";
-    const validStyle = { color: "blue", weight: 2, fillOpacity: 0.4 };
+    // Kopi Layer dari Ellipsis Drive
+    const kopiGroup = L.layerGroup();
+    const kopiLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/9d476235-2180-4885-b43e-95fffc99f987/raster/timestamp/31ff9287-5bf2-40e6-b3b5-d0d7c0754ac1/tile/{z}/{x}/{y}?style=12bd57fe-9d85-485c-8b8f-51a57de8977f&token=epat_y87AbkigisVthjOyuJwE19WNCVnrT1jIGz1peyPBKQSW82CKoHaI0jbW8zEL1OWW", {
+      transparent: true,
+      opacity: 0.6
+    });
+    kopiGroup.addLayer(kopiLayer);
+    kopiGroup.addTo(map);
 
-    function addValid() {
-      return fetch(validUrl).then(res => res.json()).then(data => {
-        validLayer = L.geoJSON(data, { style: validStyle }).addTo(map);
-        layerControl.addOverlay(validLayer, "Geodata Valid");
-      });
-    }
+    addAOI().then(() => {
+      // Tambahkan AOI dulu baru kopi ke control
+      layerControl.addOverlay(kopiGroup, "Perkebunan Kopi (Fardinatri, et al)");
 
-    // Drop (outline black only)
-    const dropUrl = "https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Drop.geojson";
-    const dropStyle = { color: "black", weight: 1, fill: false };
-
-    // simpan drop layers
-    const dropLayers = [];
-
-    function addDrop() {
-      return fetch(dropUrl).then(res => res.json()).then(data => {
-        const groups = {};
-        data.features.forEach(f => {
-          const status = f.properties.STATUS ? f.properties.STATUS.toLowerCase() : "tanpa status";
-          if (!groups[status]) groups[status] = [];
-          groups[status].push(f);
-        });
-        Object.keys(groups).forEach(status => {
-          const layer = L.geoJSON(
-            { type: "FeatureCollection", features: groups[status] },
-            { style: dropStyle }
-          );
-          // Hapus teks "Drop - " pada toggle layer
-          layerControl.addOverlay(layer, status);
-          layer.bringToBack();
-          dropLayers.push({ layer, status });
-        });
-      });
-    }
-
-    addAOI()
-      .then(addValid)
-      .then(addDrop)
-      .then(() => {
-        legend.remove();
-        legend.onAdd = updateLegend;
-        const legendContent = updateLegend();
-        if (legendContent) legend.addTo(map);
-      });
+      legend.remove();
+      legend.onAdd = updateLegend;
+      const legendContent = updateLegend();
+      if (legendContent) legend.addTo(map);
+    });
 
     // Legend
     const legend = L.control({ position: "bottomleft" });
@@ -183,12 +165,8 @@
         html += `<div class="legend-item"><div class="legend-color" style="background: red; opacity:0.2;"></div> Area of Interest</div>`;
         hasContent = true;
       }
-      if (validLayer && map.hasLayer(validLayer)) {
-        html += `<div class="legend-item"><div class="legend-color" style="background: blue; opacity:0.6;"></div> Geodata Valid</div>`;
-        hasContent = true;
-      }
-      if (dropLayers.some(dl => map.hasLayer(dl.layer))) {
-        html += `<div class="legend-item"><div class="legend-color" style="background: white; border:1px solid black;"></div> Geodata Drop</div>`;
+      if (map.hasLayer(kopiGroup)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-color\" style=\"background: #6f4e37; opacity:0.7;\"></div> Perkebunan Kopi</div>`;
         hasContent = true;
       }
 

@@ -30,27 +30,39 @@
     .legend-aoi { background: red; opacity:0.5; border: 1px solid red; }
     .legend-valid { background: blue; border: 1px solid blue; }
 
+    /* Popup styling */
+    .leaflet-popup-content {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+      line-height: 1.2em;
+    }
+    .leaflet-popup-content-wrapper {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+    }
+
     /* Responsive legend scaling for mobile */
-    /* @media (max-width: 768px) {
-      .legend { transform: scale(0.5); transform-origin: bottom left; }
-    } */
-     @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
-@media (max-width: 768px) {
-  .leaflet-control-layers {
-    font-size: 8px;       /* perkecil font */
-    padding: 2px 4px;      /* lebih rapat */
-  }
-  .leaflet-control-layers-overlays label {
-    font-size: 8px;       /* teks overlay lebih kecil */
-    line-height: 1.1em;
-  }
-  .leaflet-control-layers-overlays input[type="checkbox"] {
-    transform: scale(0.8); /* perkecil checkbox */
-    margin-top: 1px;
-  }
-  .leaflet-control-layers-label {
-    font-size: 8px;       /* juga perkecil label pemisah */
-  }
+    @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
+    @media (max-width: 768px) {
+      .leaflet-control-layers {
+        font-size: 8px;       /* perkecil font */
+        padding: 2px 4px;      /* lebih rapat */
+      }
+      .leaflet-control-layers-overlays label {
+        font-size: 8px;       /* teks overlay lebih kecil */
+        line-height: 1.1em;
+      }
+      .leaflet-control-layers-overlays input[type="checkbox"] {
+        transform: scale(0.8); /* perkecil checkbox */
+        margin-top: 1px;
+      }
+      .leaflet-control-layers-label {
+        font-size: 8px;       /* juga perkecil label pemisah */
+      }
+      .leaflet-popup-content {
+        font-size: 8px;       /* popup lebih kecil di hp */
+      }
+    }
   </style>
 </head>
 <body>
@@ -267,11 +279,11 @@
         html += `<div class=\"legend-item\"><div class=\"legend-color-box legend-valid\ style="background: blue; opacity:0.6;"></div> Kebun Pemasok</div>`;
       }
       if (map.hasLayer(supplyLayer)) {
-        html += `<div class=\"legend-item\"><div class=\"legend-marker\"></div> Titik Rantai Pasokan</div>`;
+        html += `<div class=\"legend-item\"><div class=\"legend-marker"></div> Titik Rantai Pasokan</div>`;
       }
 
       if (map.hasLayer(arcAM) || map.hasLayer(subCollectorGroup) || map.hasLayer(localBuyerGroup)) {
-        html += `<div class=\"legend-item\"><div class=\"legend-line\"></div> Jalur Distribusi</div>`;
+        html += `<div class=\"legend-item\"><div class=\"legend-line"></div> Jalur Distribusi</div>`;
       }
 
       content.innerHTML = html;
