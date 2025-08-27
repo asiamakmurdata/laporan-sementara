@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Chart.js - Luas Potensi Kopi</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      font-family:'Roboto Mono', monospace;
+      background:#fff; color:#222;
+      overflow:hidden; /* hilangkan scroll */
+    }
+    .wrap {
+      width:100%; height:100%; display:flex; flex-direction:column;
+    }
+    .controls {
+      text-align:right; padding:8px;
+    }
+    select {
+      padding:2px 6px; border-radius:4px; border:1px solid #ccc;
+      font-family:'Roboto Mono', monospace; font-size:12px;
+    }
+    h1{font-size:14px;font-weight:normal;margin:0 0 6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;text-align:center}
+    .chart-container {
+      flex:1; position:relative; width:100%; height:100%;
+    }
+    canvas {
+      width:100% !important; height:100% !important;
+    }
+
+  .chart-container{
+    height:90% !important;
+  }
+     /* Versi desktop: perbesar sedikit */
+    @media (max-width: 600px) {
+     
+      .chart-container{max-width:300px}
+    }
+
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="controls">
+    <h1 style="font-size:0.8em; line-height:1.4; text-align: left;">
+        Potensi Perkebunan Kopi: APL vs Kawasan Hutan
+    <select id="modeSelect">
+      <option value="ha" selected>Luas (ha)</option>
+      <option value="percent">Persentase (%)</option>
+    </select>
+    </h1>
+  </div>
+  <div class="chart-container">
+    <canvas id="kopiChart"></canvas>
+  </div>
+</div>
+
+<script>
+const baseLabels = ["Bandar Negeri Semuong", "Semaka", "Wonosobo"];
+
+// fungsi cek device kecil
+function getLabels() {
+  if (window.innerWidth < 600) {
+    return ["BNS", "Semaka", "Wonosobo"];
+  }
+  return baseLabels;
+}
+
+function buildData(mode="ha") {
+  const labels = getLabels();
+  if (mode==="ha") {
+    return {
+      labels: labels,
+      datasets: [
+        { label:"Areal Penggunaan Lain", data:[951.67,1030.85,1033.43], backgroundColor:"lightgrey" },
+        { label:"Kawasan Hutan", data:[610.36,222.44,139.12], backgroundColor:"green" }
+      ]
+    };
+  } else {
+    return {
+      labels: labels,
+      datasets: [
+        { label:"Areal Penggunaan Lain", data:[60.9,82.2,88.1], backgroundColor:"lightgrey" },
+        { label:"Kawasan Hutan", data:[39.1,17.8,11.9], backgroundColor:"green" }
+      ]
+    };
+  }
+}
+
+let mode="ha";
+let chart=new Chart(document.getElementById("kopiChart"),{
+  type:"bar",
+  data:buildData(mode),
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{ position:"bottom", labels:{ font:{family:"Roboto Mono"} } },
+      tooltip:{ bodyFont:{family:"Roboto Mono"}, titleFont:{family:"Roboto Mono"} },
+      datalabels:{ anchor:"end", align:"end", font:{family:"Roboto Mono",size:11},
+        formatter:(value,context)=>{
+          const isPercent=context.chart.options.scales.y.title.text.includes("%");
+          return isPercent? value+"%" : value;
+        }
+      }
+    },
+    scales:{
+      y:{ title:{ display:true, text:"Luas (ha)", font:{family:"Roboto Mono"} }, grid:{ drawOnChartArea:false } },
+      x:{ ticks:{ font:{family:"Roboto Mono"} }, grid:{ drawOnChartArea:false } }
+    }
+  },
+  plugins:[ChartDataLabels]
+});
+
+document.getElementById("modeSelect").addEventListener("change", function(){
+  mode=this.value;
+  chart.data=buildData(mode);
+  chart.options.scales.y.title.text=(mode==="ha")?"Luas (ha)":"Persentase (%)";
+  chart.update();
+});
+
+window.addEventListener("resize",()=>{
+  chart.data=buildData(mode);
+  chart.update();
+});
+</script>
+</body>
+</html>
