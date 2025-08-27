@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
   <style>
-        body {
+   body {
         font-family: "Roboto Mono", monospace;
         margin: 0;
         padding: 0;
@@ -23,74 +23,57 @@
       }
     #map { flex: 1; width: 100%; }
     .legend {
-    font-family: "Roboto Mono", monospace;
-    font-size: 14px;
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
       position: absolute;
       bottom: 20px; left: 10px;
       background: white; padding: 6px 12px;
-      border-radius: 4px; font-size: 10px;
-      min-width: 160px; white-space: nowrap;
+      border-radius: 4px;
+      min-width: 160px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
+    .legend-header {
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    .legend-content { display: block; }
+    .legend.collapsed .legend-content { display: none; }
+
     .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
     .legend-color { width: 20px; height: 20px; margin-right: 8px; border: 1px solid #555; }
-    /* Responsive legend scaling for mobile */
+    .legend-subtitle { font-weight: bold; margin-bottom: 4px; }
+
     @media (max-width: 768px) {
-      .legend {
-    font-family: "Roboto Mono", monospace;
-    font-size: 14px; transform: scale(0.5); transform-origin: bottom left; }
+      .legend { transform: scale(0.6); transform-origin: bottom left; }
     }
-  
-  .leaflet-control-layers {
-    font-family: "Roboto Mono", monospace;
-    font-size: 10px;
-  }
-  @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
-@media (max-width: 768px) {
-  .leaflet-control-layers {
-    font-size: 8px;       /* perkecil font */
-    padding: 2px 4px;      /* lebih rapat */
-  }
-  .leaflet-control-layers-overlays label {
-    font-size: 8px;       /* teks overlay lebih kecil */
-    line-height: 1.1em;
-  }
-  .leaflet-control-layers-overlays input[type="checkbox"] {
-    transform: scale(0.8); /* perkecil checkbox */
-    margin-top: 1px;
-  }
-  .leaflet-control-layers-label {
-    font-size: 8px;       /* juga perkecil label pemisah */
-  }
-}
 
-/* Popup styling */
-.leaflet-popup-content {
-  font-family: "Roboto Mono", monospace;
-  font-size: 10px; /* perkecil font */
-  line-height: 1.2em;
-}
-.leaflet-popup-content-wrapper {
-  font-family: "Roboto Mono", monospace;
-  font-size: 10px;
-  padding: 4px 6px; /* lebih rapat */
-}
+    .leaflet-control-layers {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+    }
+    @media (max-width: 768px) {
+      .leaflet-control-layers { font-size: 8px; padding: 2px 4px; }
+      .leaflet-control-layers-overlays label { font-size: 8px; line-height: 1.1em; }
+      .leaflet-control-layers-overlays input[type="checkbox"] { transform: scale(0.8); margin-top: 1px; }
+      .leaflet-control-layers-label { font-size: 8px; }
+    }
 
-@media (max-width: 768px) {
-  .leaflet-popup-content {
-    font-size: 8px; /* popup lebih kecil di hp */
-  }
-}
-
-</style>
+    /* Popup styling */
+    .leaflet-popup-content { font-family: "Roboto Mono", monospace; font-size: 10px; line-height: 1.2em; }
+    .leaflet-popup-content-wrapper { font-family: "Roboto Mono", monospace; font-size: 10px; padding: 4px 6px; }
+    @media (max-width: 768px) { .leaflet-popup-content { font-size: 8px; } }
+  </style>
 </head>
 <body>
-   <h3>Wilayah Potensi Komoditas Kopi</h3>
+       <h3>Sebaran Potensi Komoditas Kopi</h3>
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-gesture-handling"></script>
   <script>
-    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 12);
+    const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true }).setView([-5.5, 105.3], 6);
 
     const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
@@ -108,7 +91,7 @@
     const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
     let aoiLayer;
-    const MIN_START_ZOOM = 12;
+    const MIN_START_ZOOM = 10;
 
     function addAOI() {
       return fetch(aoiUrl).then(res => res.json()).then(data => {
@@ -148,7 +131,7 @@
       });
     }
 
-    // Kopi Layer dari Ellipsis Drive
+    // Kopi Layer
     const kopiGroup = L.layerGroup();
     const kopiLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/9d476235-2180-4885-b43e-95fffc99f987/raster/timestamp/31ff9287-5bf2-40e6-b3b5-d0d7c0754ac1/tile/{z}/{x}/{y}?style=12bd57fe-9d85-485c-8b8f-51a57de8977f&token=epat_y87AbkigisVthjOyuJwE19WNCVnrT1jIGz1peyPBKQSW82CKoHaI0jbW8zEL1OWW", {
       transparent: true,
@@ -157,47 +140,78 @@
     kopiGroup.addLayer(kopiLayer);
     kopiGroup.addTo(map);
 
-    addAOI().then(() => {
-      // Tambahkan AOI dulu baru kopi ke control
-      layerControl.addOverlay(kopiGroup, "Perkebunan Kopi (Fardinatri, et al)");
+    // Simontini Layer
+    const simontiniGroup = L.layerGroup();
+    const simontiniLayer = L.tileLayer.wms("https://aws.simontini.id/geoserver/wms", {
+      layers: "simontini:Forest_estate_adm",
+      format: "image/png",
+      transparent: true,
+      opacity: 0.7
+    });
+    simontiniGroup.addLayer(simontiniLayer);
+    simontiniGroup.addTo(map);
 
+    addAOI().then(() => {
+      layerControl.addOverlay(kopiGroup, "Perkebunan Kopi (Fardinatri, et al)");
+      layerControl.addOverlay(simontiniGroup, "Fungsi Kawasan Hutan");
       legend.remove();
-      legend.onAdd = updateLegend;
-      const legendContent = updateLegend();
+      legend.onAdd = createLegend;
+      const legendContent = createLegend();
       if (legendContent) legend.addTo(map);
     });
 
-    // Legend
+    // Collapsible Legend
     const legend = L.control({ position: "bottomleft" });
 
-    function updateLegend() {
-      const div = L.DomUtil.create("div", "legend");
-      let html = "<b>Keterangan</b><br>";
-      let hasContent = false;
+    function createLegend() {
+      const div = L.DomUtil.create("div", "legend collapsed");
 
-      if (aoiLayer && map.hasLayer(aoiLayer)) {
-        html += `<div class="legend-item"><div class="legend-color" style="background: red; opacity:0.2;"></div> Area of Interest</div>`;
-        hasContent = true;
-      }
-      if (map.hasLayer(kopiGroup)) {
-        html += `<div class=\"legend-item\"><div class=\"legend-color\" style=\"background: #6f4e37; opacity:0.7;\"></div> Perkebunan Kopi</div>`;
-        hasContent = true;
-      }
+      const header = L.DomUtil.create("div", "legend-header", div);
+      header.innerHTML = "Keterangan ▸";
 
-      if (!hasContent) return null;
+      const content = L.DomUtil.create("div", "legend-content", div);
+      content.innerHTML = updateLegendHTML();
 
-      div.innerHTML = html;
+      header.onclick = function () {
+        if (div.classList.contains("collapsed")) {
+          div.classList.remove("collapsed");
+          header.innerHTML = "Keterangan ▾";
+        } else {
+          div.classList.add("collapsed");
+          header.innerHTML = "Keterangan ▸";
+        }
+      };
+
       return div;
     }
 
-    // update setiap ada perubahan layer
+    function updateLegendHTML() {
+      let html = "";
+
+      if (aoiLayer && map.hasLayer(aoiLayer)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-color\" style=\"background:red; opacity:0.2\"></div> Area of Interest</div>`;
+      }
+      if (map.hasLayer(kopiGroup)) {
+        html += `<div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#6f4e37; opacity:0.7\"></div> Perkebunan Kopi</div>`;
+      }
+      if (map.hasLayer(simontiniGroup)) {
+        html += `
+        <div class=\"legend-item\" style=\"flex-direction: column; align-items: flex-start;\">
+          <div class=\"legend-subtitle\">Fungsi Kawasan Hutan</div>
+          <div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#ADA3FF; opacity:0.7\"></div>Kawasan Konservasi</div>
+          <div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#4CE600; opacity:0.7\"></div>Hutan Lindung</div>
+          <div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#FFFF73; opacity:0.7\"></div>Hutan Produksi</div>
+          <div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#A3FF73; opacity:0.7\"></div>Hutan Produksi Terbatas</div>
+          <div class=\"legend-item\"><div class=\"legend-color\" style=\"background:#FFFFFF; opacity:0.7\"></div>Areal Penggunaan Lain</div>
+        </div>`;
+      }
+      return html;
+    }
+
     map.on("overlayadd overlayremove", () => {
       legend.remove();
-      legend.onAdd = updateLegend;
-      const legendContent = updateLegend();
-      if (legendContent) {
-        legend.addTo(map);
-      }
+      legend.onAdd = createLegend;
+      legend.addTo(map);
     });
   </script>
 </body>
