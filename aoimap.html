@@ -48,8 +48,44 @@
     font-family: "Roboto Mono", monospace;
     font-size: 10px;
   }
+      /* Popup styling */
+    .leaflet-popup-content {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+      line-height: 1.2em;
+    }
+    .leaflet-popup-content-wrapper {
+      font-family: "Roboto Mono", monospace;
+      font-size: 10px;
+    }
+    @media (max-width: 768px) {
+  .leaflet-popup-content {
+    font-size: 8px; /* popup lebih kecil di hp */
+  }
+}
     </style>
-  </head>
+  
+<style>
+  .callout-label {
+    pointer-events: none;
+  }
+  .callout-label span{
+    font-family:'Roboto Mono', monospace;
+    font-size:12px;
+    color:#000;
+    background:#fff;
+    padding:2px 6px;
+    border:1px solid #3333;
+    border-radius:4px;
+    box-shadow:0 1px 3px rgba(0,0,0,.2);
+    white-space:nowrap;
+  }
+  @media (max-width: 600px) {
+    .callout-label span { font-size:10px !important; }
+  }
+</style>
+
+</head>
   <body>
     <h3>Wilayah Kajian</h3>
     <div id="map"></div>
@@ -122,7 +158,40 @@
       const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
       // Ambil dan tampilkan GeoJSON
-      fetch(geojsonUrl)
+      
+// Buat callout label di luar poligon + leader line
+function makeCallout(map, layer, name, options = {}) {
+  const anchorLatLng = layer.getBounds().getCenter();
+  const offsetPx = options.offsetPx || { x: 40, y: -20 };
+  const lineStyle = Object.assign(
+    { color: "#000", weight: 1, dashArray: "4,4", opacity: 0.7 },
+    options.lineStyle || {}
+  );
+  function computeLabelLatLng() {
+    const p = map.latLngToContainerPoint(anchorLatLng);
+    const p2 = L.point(p.x + offsetPx.x, p.y + offsetPx.y);
+    return map.containerPointToLatLng(p2);
+  }
+  let labelLatLng = computeLabelLatLng();
+  const marker = L.marker(labelLatLng, {
+    icon: L.divIcon({
+      className: "callout-label",
+      html: `<span>${name}</span>`,
+      iconSize: null
+    }),
+    interactive: false
+  }).addTo(map);
+  const line = L.polyline([anchorLatLng, labelLatLng], lineStyle).addTo(map);
+  function update() {
+    labelLatLng = computeLabelLatLng();
+    marker.setLatLng(labelLatLng);
+    line.setLatLngs([anchorLatLng, labelLatLng]);
+  }
+  map.on("zoomend moveend", update);
+  return { marker, line, update };
+}
+
+fetch(geojsonUrl)
         .then((res) => res.json())
         .then((data) => {
           const geoLayer = L.geoJSON(data, {
@@ -142,16 +211,7 @@
                   feature.properties.kecamatan ||
                   feature.properties.NAMOBJ;
                 if (name) {
-                  const center = layer.getBounds().getCenter();
-                  L.marker(center, {
-                    icon: L.divIcon({
-                      className: "label",
-                      html: `<span style="font-family:'Roboto Mono', monospace; font-size:12px; color:black; background:white; padding:2px 4px; border-radius:3px;">${name}</span>`,
-                      iconSize: [120, 24],
-                    }),
-                    interactive: false,
-                  }).addTo(map);
-                }
+                  }
               }
 
               // Event highlight & popup on hover
