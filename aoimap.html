@@ -64,28 +64,7 @@
   }
 }
     </style>
-  
-<style>
-  .callout-label {
-    pointer-events: none;
-  }
-  .callout-label span{
-    font-family:'Roboto Mono', monospace;
-    font-size:12px;
-    color:#000;
-    background:#fff;
-    padding:2px 6px;
-    border:1px solid #3333;
-    border-radius:4px;
-    box-shadow:0 1px 3px rgba(0,0,0,.2);
-    white-space:nowrap;
-  }
-  @media (max-width: 600px) {
-    .callout-label span { font-size:10px !important; }
-  }
-</style>
-
-</head>
+  </head>
   <body>
     <h3>Wilayah Kajian</h3>
     <div id="map"></div>
@@ -158,40 +137,7 @@
       const highlightStyle = { color: "red", weight: 3, fillOpacity: 0.5 };
 
       // Ambil dan tampilkan GeoJSON
-      
-// Buat callout label di luar poligon + leader line
-function makeCallout(map, layer, name, options = {}) {
-  const anchorLatLng = layer.getBounds().getCenter();
-  const offsetPx = options.offsetPx || { x: 40, y: -20 };
-  const lineStyle = Object.assign(
-    { color: "#000", weight: 1, dashArray: "4,4", opacity: 0.7 },
-    options.lineStyle || {}
-  );
-  function computeLabelLatLng() {
-    const p = map.latLngToContainerPoint(anchorLatLng);
-    const p2 = L.point(p.x + offsetPx.x, p.y + offsetPx.y);
-    return map.containerPointToLatLng(p2);
-  }
-  let labelLatLng = computeLabelLatLng();
-  const marker = L.marker(labelLatLng, {
-    icon: L.divIcon({
-      className: "callout-label",
-      html: `<span>${name}</span>`,
-      iconSize: null
-    }),
-    interactive: false
-  }).addTo(map);
-  const line = L.polyline([anchorLatLng, labelLatLng], lineStyle).addTo(map);
-  function update() {
-    labelLatLng = computeLabelLatLng();
-    marker.setLatLng(labelLatLng);
-    line.setLatLngs([anchorLatLng, labelLatLng]);
-  }
-  map.on("zoomend moveend", update);
-  return { marker, line, update };
-}
-
-fetch(geojsonUrl)
+      fetch(geojsonUrl)
         .then((res) => res.json())
         .then((data) => {
           const geoLayer = L.geoJSON(data, {
@@ -211,27 +157,45 @@ fetch(geojsonUrl)
                   feature.properties.kecamatan ||
                   feature.properties.NAMOBJ;
                 if (name) {
-                  }
+                  const center = layer.getBounds().getCenter();
+                  L.marker(center, {
+                    icon: L.divIcon({
+                      className: "label",
+                      html: `<span style="font-family:'Roboto Mono', monospace; font-size:12px; color:black; background:white; padding:2px 4px; border-radius:3px;">${name}</span>`,
+                      iconSize: [120, 24],
+                    }),
+                    interactive: false,
+                  }).addTo(map);
+
+          // Reset style dan tutup popup saat klik di luar layer
+          map.on("click", () => {
+            geoLayer.resetStyle();
+            map.closePopup();
+          });
+    
+                }
               }
 
-              // Event highlight & popup on hover
-              layer.on({
-                mouseover: (e) => {
-                  e.target.setStyle(highlightStyle);
-                  if (popupContent) {
-                    e.target.openPopup(e.latlng);
-                  }
-                  if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                    e.target.bringToFront();
-                  }
-                },
-                mouseout: (e) => {
-                  geoLayer.resetStyle(e.target);
-                  e.target.closePopup();
-                },
-              });
+              
+// Event highlight & popup hanya saat klik
+layer.on({
+  click: (e) => {
+    e.target.setStyle(highlightStyle);
+    if (popupContent) {
+      e.target.openPopup(e.latlng);
+    }
+  },
+});
+
             },
           }).addTo(map);
+
+          // Reset style dan tutup popup saat klik di luar layer
+          map.on("click", () => {
+            geoLayer.resetStyle();
+            map.closePopup();
+          });
+    
 
           // Batasi area peta sesuai bounding box AOI
           map.fitBounds(geoLayer.getBounds());
