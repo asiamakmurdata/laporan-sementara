@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Peringatan Gangguan Hutan</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Roboto Mono', monospace;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .controls { margin: 5px 10px; }
+  select { padding:4px 8px; border-radius:4px; border:1px solid #ccc; font-family:'Roboto Mono'; font-size:12px; }
+    .chart-container { width:100%; height: calc(100vh - 60px); }
+    canvas { width:100% !important; height:100% !important; font-family:'Roboto Mono', monospace; }
+    h2 { margin:10px; font-size:18px; font-family:'Roboto Mono', monospace; }
+     h1{font-size:14px;font-weight:normal;margin:0 0 6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;text-align:center}
+ 
+  .chart-container{
+    height:80% !important;
+  }
+     /* Versi desktop: perbesar sedikit */
+    @media (max-width: 600px) {
+     
+      .chart-container{max-width:300px}
+    }
+ </style>
+</head>
+<body>
+  
+  <div class="controls">
+    <h1 style="font-size:0.8em; line-height:1.4; text-align: left;">Peringatan Gangguan Hutan: APL vs Kawasan Hutan
+    <label>
+      <select id="kecamatanSelect"></select>
+    </label>
+    </h1>
+  </div>
+  <div class="chart-container">
+    <canvas id="barchart"></canvas>
+  </div>
+
+<script>
+const bulan = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul"];
+
+// Data hasil ekstraksi dari tabel (APL & Hutan Lindung)
+const data = {
+  "Bandar Negeri Semuong": {
+    "Atar Lebar": {APL:{Mar:1.56, Mei:0.06, Jul:0.06}, Hutan:{Mar:0.15, Apr:0.02, Mei:0.06}},
+    "Bandar Sukabumi": {APL:{Mar:0.68}, Hutan:{}},
+    "Gunung Doh": {APL:{Mar:0.31, Apr:0.14, Mei:0.15, Jun:0.06}, Hutan:{}},
+    "Negeri Agung": {APL:{Mar:0.35, Mei:0.22, Jun:0.09}, Hutan:{}},
+    "Sanggi": {APL:{Mar:0.55, Apr:0.1, Mei:0.19}, Hutan:{}},
+    "Sanggi Unggak": {APL:{Mar:0.06}, Hutan:{}},
+    "Sinar Bangun": {APL:{Mar:0.6, Mei:0.31}, Hutan:{}},
+    "Tulung Sari": {APL:{Mar:0.06, Mei:0.04, Jun:0.1}, Hutan:{}}
+  },
+  "Semaka": {
+    "Karang Agung": {APL:{Mar:0.25, Mei:0.12, Jul:0.06}, Hutan:{Mar:0.12}},
+    "Karang Rejo": {APL:{Mar:0.68, Apr:0.64, Mei:0.22, Jun:0.09, Jul:0.19}, Hutan:{}},
+    "Margomulyo": {APL:{Mar:0.09}, Hutan:{}},
+    "Sri Purnomo": {APL:{Mar:0.15}, Hutan:{}},
+    "Sri Katon": {APL:{Mar:0.25}, Hutan:{Apr:0.14}},
+    "Tugu Papak": {APL:{Jun:0.1}, Hutan:{}},
+    "Tugu Rejo": {APL:{Mei:0.06, Jun:0.09}, Hutan:{}},
+    "Way Kerap": {APL:{Mar:0.04}, Hutan:{Mar:0.02}},
+    "Pardawaras": {APL:{}, Hutan:{Mar:0.1}},
+    "Tulung Asahan": {APL:{}, Hutan:{Jan:0.27, Feb:0.08, Mar:0.17, Apr:0.2, Mei:0.51, Jun:0.07, Jul:0.03}}
+  },
+  "Wonosobo": {
+    "Bandar Kejadian": {APL:{Mar:0.45, Mei:0.24, Jun:0.14}, Hutan:{}},
+    "Banyu Urip": {APL:{Mei:0.04}, Hutan:{}},
+    "Dadirejo": {APL:{Mei:0.15}, Hutan:{}},
+    "Kunyayan": {APL:{Mar:0.16}, Hutan:{}},
+    "Negeri Ngarip": {APL:{Mei:0.28}, Hutan:{}},
+    "Pardasuka": {APL:{Mar:0.04, Mei:0.06}, Hutan:{}},
+    "Pekon Balak": {APL:{Mei:0.06, Jul:0.1}, Hutan:{}},
+    "Sampang Turus": {APL:{Mar:0.25}, Hutan:{}},
+    "Tanjung Kurung": {APL:{Mar:0.04}, Hutan:{}},
+    "Way Panas": {APL:{Mar:0.09, Apr:0.06, Jun:0.12, Jul:0.1}, Hutan:{Mar:0.14, Mei:0.19}}
+  }
+};
+
+let chart;
+
+function updateDropdowns(){
+  const kecSelect = document.getElementById("kecamatanSelect");
+  kecSelect.innerHTML = "";
+  // Tambahkan opsi "Semua Kecamatan"
+  const optAllKec = document.createElement("option");
+  optAllKec.value = "ALL_KEC";
+  optAllKec.textContent = "Semua Kecamatan";
+  kecSelect.appendChild(optAllKec);
+
+  Object.keys(data).forEach(kec=>{
+    const opt = document.createElement("option");
+    opt.value = kec; opt.textContent = kec;
+    kecSelect.appendChild(opt);
+  });
+  kecSelect.addEventListener("change", updateChart);
+}
+
+function updateChart(){
+  const kec = document.getElementById("kecamatanSelect").value;
+
+  const totalAPL = bulan.map(b=>0);
+  const totalHutan = bulan.map(b=>0);
+
+  if(kec==="ALL_KEC"){
+    Object.values(data).forEach(desaData=>{
+      Object.values(desaData).forEach(d=>{
+        bulan.forEach((bln,i)=>{
+          totalAPL[i] += d.APL[bln] || 0;
+          totalHutan[i] += d.Hutan[bln] || 0;
+        });
+      });
+    });
+  } else {
+    const desaData = data[kec] || {};
+    Object.values(desaData).forEach(d=>{
+      bulan.forEach((bln,i)=>{
+        totalAPL[i] += d.APL[bln] || 0;
+        totalHutan[i] += d.Hutan[bln] || 0;
+      });
+    });
+  }
+
+  const datasets = [
+    {label:"APL", data: totalAPL, backgroundColor:"lightgrey" },
+    {label:"Kawasan Hutan", data: totalHutan, backgroundColor:"green"}
+  ];
+
+  if(chart) chart.destroy();
+  chart = new Chart(document.getElementById("barchart"), {
+    type:'bar',
+    data:{labels:bulan, datasets:datasets},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{position:"bottom", labels:{font:{family:"Roboto Mono"}}},
+        tooltip:{callbacks:{label: ctx=>ctx.dataset.label+" - "+ctx.label+": "+parseFloat(ctx.raw).toFixed(2)+" ha"}},
+        datalabels:{
+          color:"#000",
+          anchor:"end",
+          align:"end",
+          font:{family:"Roboto Mono"},
+          formatter:(val)=> val>0 ? val.toFixed(2) : ""
+        }
+      },
+      scales:{
+        x:{   title:{
+      display:true,
+      text:"Bulan",
+      font:{ family:"Roboto Mono" }
+    }, grid:{display:true, drawBorder:true}, ticks:{font:{family:"Roboto Mono"}} },
+        y:{ beginAtZero:true, grid:{display:true, drawBorder:true}, title:{display:true, text:"Gangguan Hutan (ha)", font:{family:"Roboto Mono"}}, ticks:{font:{family:"Roboto Mono"}} }
+      }
+    },
+    plugins:[ChartDataLabels]
+  });
+}
+
+// init
+updateDropdowns();
+updateChart();
+</script>
+</body>
+</html>

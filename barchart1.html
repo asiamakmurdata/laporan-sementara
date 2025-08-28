@@ -14,6 +14,9 @@
       background:#fff; color:#222;
       overflow:hidden; /* hilangkan scroll */
     }
+    * {
+  font-family: 'Roboto Mono', monospace !important;
+}
     .wrap {
       width:100%; height:100%; display:flex; flex-direction:column;
     }
@@ -109,12 +112,31 @@ let chart=new Chart(document.getElementById("kopiChart"),{
       }
     },
     scales:{
-      y:{ title:{ display:true, text:"Luas (ha)", font:{family:"Roboto Mono"} }, grid:{ drawOnChartArea:false } },
-      x:{ ticks:{ font:{family:"Roboto Mono"} }, grid:{ drawOnChartArea:false } }
-    }
+  y:{
+    title:{
+      display:true,
+      text:"Luas (ha)",
+      font:{ family:"Roboto Mono" }
+    },
+    ticks:{ font:{ family:"Roboto Mono" } },
+    grid:{ drawOnChartArea:true }
+  },
+  x:{
+    title:{
+      display:true,
+      text:"Kecamatan",
+      font:{ family:"Roboto Mono" }
+    },
+    ticks:{ font:{ family:"Roboto Mono" } },
+    grid:{ drawOnChartArea:true }
+  }
+}
+
   },
   plugins:[ChartDataLabels]
 });
+
+
 
 document.getElementById("modeSelect").addEventListener("change", function(){
   mode=this.value;
