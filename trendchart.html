@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tren Kehilangan Tutupan Pohon</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      font-family:'Roboto Mono', monospace;
+      background:#fff; color:#222;
+      overflow:hidden;
+    }
+    .wrap {
+      width:100%; height:100%; display:flex; flex-direction:column;
+    }
+    .header {
+      display:flex; flex-direction:column; align-items:flex-start;
+      padding:8px 12px; flex:0 0 auto;
+    }
+    .header h1 {
+      font-size:16px; margin:0 0 6px 0; font-weight:normal;
+    }
+    select {
+      padding:4px 8px; border-radius:4px; border:1px solid #ccc;
+      font-family:'Roboto Mono', monospace; font-size:14px;
+    }
+    .chart-container {
+      flex:1; position:relative; width:100%;
+    }
+    canvas {
+      width:100% !important;
+      height:100% !important;
+    }
+    .chart-container{
+      height:80% !important;
+    }
+    @media (max-width: 600px) {
+      .chart-container{max-width:300px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Tren Kehilangan Tutupan Pohon: APL vs Kawasan Hutan</h1>
+    <select id="kecamatanSelect">
+      <option value="Bandar Negeri Semuong">Bandar Negeri Semuong</option>
+      <option value="Semaka">Semaka</option>
+      <option value="Wonosobo">Wonosobo</option>
+    </select>
+  </div>
+  <div class="chart-container">
+    <canvas id="lossChart"></canvas>
+  </div>
+</div>
+
+<script>
+// Data tahun
+const years = Array.from({length: 2024-2001+1}, (_,i)=>2001+i);
+
+// Data kehilangan tutupan pohon
+const dataLoss = {
+  "Bandar Negeri Semuong": {
+    apl: [4,5,1,10,10,6,2,10,10,10,12,13,7,12,22,78,43,65,69,33,11,15,29,31],
+    hutan: [9,9,6,34,13,38,11,26,27,18,31,19,8,26,30,10,20,8,59,6,8,8,141,32]
+  },
+  "Semaka": {
+    apl: [11,4,1,6,5,10,6,15,33,18,7,7,2,3,21,62,11,8,10,8,9,15,38,14],
+    hutan: [29,77,16,61,14,121,28,71,80,39,79,26,6,30,92,21,25,15,43,10,11,13,34,16]
+  },
+  "Wonosobo": {
+    apl: [10,12,2,5,5,13,4,8,10,6,12,6,2,2,14,158,161,194,69,26,5,3,12,16],
+    hutan: [4,5,1,11,5,16,2,9,7,11,12,4,1,3,2,1,4,1,1,1,0,1,1,14]
+  }
+};
+
+let ctx = document.getElementById('lossChart').getContext('2d');
+let chart;
+
+function buildChart(kecamatan){
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Areal Penggunaan Lain',
+          data: dataLoss[kecamatan].apl,
+          borderColor: 'grey',
+          backgroundColor: 'rgba(128,128,128,0.2)',
+          tension: 0.2
+        },
+        {
+          label: 'Kawasan Hutan',
+          data: dataLoss[kecamatan].hutan,
+          borderColor: 'green',
+          backgroundColor: 'rgba(0,128,0,0.2)',
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: { display: false },
+        legend: { 
+          position: 'bottom', 
+          labels:{ 
+            font:{family:"Roboto Mono"},
+            usePointStyle: true,
+            pointStyle: 'line'
+          } 
+        },
+        tooltip: {
+          bodyFont:{family:"Roboto Mono"},
+          titleFont:{family:"Roboto Mono"},
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ": " + context.formattedValue + " ha";
+            }
+          }
+        }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Luas Kehilangan (ha)', font:{family:"Roboto Mono"} } },
+        x: { 
+          title: { display: true, text: 'Tahun', font:{family:"Roboto Mono"} },
+          ticks: { maxRotation:90, minRotation:90, font:{family:"Roboto Mono"} }
+        }
+      }
+    }
+  });
+}
+
+document.getElementById('kecamatanSelect').addEventListener('change', function(){
+  buildChart(this.value);
+});
+
+// tampilkan pertama kali
+buildChart("Bandar Negeri Semuong");
+</script>
+</body>
+</html>
