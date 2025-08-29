@@ -9,12 +9,12 @@
     html, body { height: 100%; margin: 0; overflow-y: hidden;}
     body { font-family: 'Roboto Mono', monospace; background: #fff; }
     header { background: lightgrey; padding: 8px 20px; font-family: 'Roboto Mono', monospace; position: relative; }
-    .tree-container { width: 100%; height: calc(100% - 58px); font-family: 'Roboto Mono', monospace;   }
+    .tree-container { width: 100%; height: calc(100% - 50px); font-family: 'Roboto Mono', monospace;   }
     .link { fill: none; stroke: #555; stroke-opacity: 0.4; stroke-width: 1.5px; }
     .node circle { cursor: pointer; }
     .node text { font: 12px 'Roboto Mono', monospace; dominant-baseline: middle; }
     .subtitle { font-size: 12px; color: #666; margin: 0; position: absolute; top: 36px; right: 20px; }
-    svg { width: 100%; height: 100%; display: block; }
+    svg { width: 100%; height: 100%; display: block; margin-top: -50px; }
   </style>
 </head>
 <body>
@@ -23,11 +23,11 @@
 
   </header> -->
    <p style="font-size:0.8em; line-height:1.4; text-align: left; padding: 0px 20px">Pohon Keputusan: Penilaian Risiko</p>
-
+  <p style="font-size:0.6em; line-height:1.4; text-align: left; padding: 0px 20px;">klik untuk memperluas</p>
   <div class="tree-container">
     <svg id="tree"></svg>
   </div>
-   <p style="font-size:0.6em; line-height:1.4; text-align: left; padding: 0px 20px; margin-top: -10px;">klik untuk memperluas</p>
+
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
 const data = {
@@ -50,16 +50,19 @@ const data = {
             { 
               name: "Ya",
               children: [
-                 { name: "Ya (Risiko Rendah)" },
                 { 
                   name: "Komoditas 2020", 
                   children: [
-                    { name: "Deforestasi ≤2020 (Risiko Rendah)" },
-                    { name: "Tidak", children: [
-                        { name: "Deforestasi >2020", children: [
-                            { name: "Ya (Risiko Tinggi)" },
-                            { name: "Tidak (Perlu Info Lanjutan)" }
-                        ]},
+                    { name: "Ya (Risiko Rendah)" },
+                          { name: "Tidak", children: [
+                              { name: "Deforestasi ≤2020", children: [
+                                  { name: "Ya (Risiko Rendah)" },
+                                  { name: "Tidak", children: [
+                                        { name: "Deforestasi >2020", children: [
+                                                { name: "Ya (Risiko Tinggi)" },
+                                                { name: "Tidak (Perlu Info Lanjutan)" }
+                              ]}]}
+                              ]},
                         
                     ]},
                    
@@ -145,16 +148,16 @@ const data = {
         treeData = treeLayout(root);
         nodes = treeData.descendants();
         links = treeData.links();
-        nodes.forEach(d => d.y = d.depth * 35);
+        nodes.forEach(d => d.y = d.depth * 30);
         transformFn = d => `translate(${d.x},${d.y})`;
       } else {
         // layout horizontal (Desktop)
-        treeLayout = d3.tree().size([height - 40, width - 90]);
+        treeLayout = d3.tree().size([height - 40, width - 70]);
         diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
         treeData = treeLayout(root);
         nodes = treeData.descendants();
         links = treeData.links();
-        nodes.forEach(d => d.y = d.depth * 100); // ubah panjang node jadi 120
+        nodes.forEach(d => d.y = d.depth * 80); // ubah panjang node jadi 120
         transformFn = d => `translate(${d.y},${d.x})`;
       }
 
@@ -177,16 +180,16 @@ const data = {
         });
 
       nodeEnter.append('circle')
-        .attr('r', 6)
+        .attr('r', 7)
         .style("fill", d => d._children ? "#000" : "#ccc");
 
       nodeEnter.append('text')
         .attr('dy', isMobile ? 1.5 : 0.3)          
         .attr('x', isMobile ? 0 : 10)              
         .attr('text-anchor', isMobile ? 'middle' : 'start')
-            .style('font-size', isMobile ? '8px' : '10px')   <!-- font lebih kecil di HP -->
+            .style('font-size', isMobile ? '7px' : '10px')   <!-- font lebih kecil di HP -->
         .text(d => d.data.name)
-        .call(wrap, isMobile ? 50 : 100);  // wrap juga untuk desktop
+        .call(wrap, isMobile ? 50 : 50);  // wrap juga untuk desktop
 
       const nodeUpdate = nodeEnter.merge(node);
 
@@ -195,7 +198,7 @@ const data = {
         .attr("transform", transformFn);
 
       nodeUpdate.select('circle')
-        .attr('r', 6)
+        .attr('r', 7)
         .style("fill", d => d._children ? "#000" : "#ccc");
 
       node.exit().transition()
