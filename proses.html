@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1, user-scalable=no"
+    />
+    <title>Workflow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #ffffff;
+        overflow-x: hidden;
+      }
+      .title {
+        font-family: "Roboto Mono", monospace;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #000000;
+      }
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        align-items: center;
+      }
+      .row {
+        display: flex;
+        /* gap: 20px; */
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 auto;
+      }
+
+      .row:first-child .item img {
+        width: auto;
+        height: 100px;
+      }
+
+      .caption {
+        margin-top: 6px;
+        text-align: center;
+        font-family: "Roboto Mono", monospace;
+        color: #000000;
+        word-wrap: break-word;
+      }
+
+      /* Kecilkan font baris pertama */
+      .row:first-child .caption {
+        font-size: 10px;
+      }
+      .row:nth-of-type(2) .caption {
+        font-size: 10px;
+      }
+
+      @media (max-width: 500px) {
+        .row:first-child .item img {
+          width: 100px;
+          height: auto;
+        }
+        .row {
+          display: flex;
+          /* gap: 20px; */
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title"> <a 
+                    class="break-long-url"
+                    target="_blank"
+                    href="https://drive.google.com/drive/folders/19qLX3YTi7HAIUJfQcRyxu7qTSIZi7yD8?usp=sharing"
+                    >Unduh</a
+                  > hasil penilaian risiko</div>
+    <div class="wrapper">
+      <div class="row">
+        <div class="item">
+         
+          <img src="img/flaticon/hourglass.gif" alt="proses" />
+        </div>
+        <div class="item">
+          <img src="img/flaticon/plus.svg" alt="plus" />
+        </div>
+        <div class="item">
+          <img src="img/flaticon/OpenForis-whisp-Logo-2.svg" alt="whisp" />
+
+     
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

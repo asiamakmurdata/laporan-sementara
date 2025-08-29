@@ -135,7 +135,7 @@ const overlayLayers = {
   // === Penilaian Risiko (dipisah) ===
   "Risiko Rendah": risikoRendahGroup,
   "Risiko Tinggi": risikoTinggiGroup,
-  "Risiko Butuh Info Lanjutan": risikoInfoGroup
+  "Butuh Info Lanjutan": risikoInfoGroup
 };
 
 const layerControl = L.control.layers(baseMaps, overlayLayers, { collapsed: true }).addTo(map);
@@ -183,7 +183,7 @@ function ensureSeparators() {
     const risikoTinggi = Array.from(control.querySelectorAll('label'))
       .find(l => l.textContent.includes('Risiko Tinggi'));
     const risikoInfo = Array.from(control.querySelectorAll('label'))
-      .find(l => l.textContent.includes('Risiko Butuh Info Lanjutan'));
+      .find(l => l.textContent.includes('Butuh Info Lanjutan'));
 
     // keluarkan lalu sisipkan ulang terbalik -> hasil akhir: Rendah, Tinggi, Info
     [risikoInfo, risikoTinggi, risikoRendah].forEach(lbl => {
