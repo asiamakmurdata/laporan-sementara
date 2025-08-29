@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"/>
+<title>Risk Map - Split Risiko</title>
 <style>
 .legend-header {
   display: flex;
@@ -21,20 +22,8 @@ body { font-family: "Roboto Mono", monospace; margin: 0; padding: 0; display: fl
 .legend-title { font-weight: bold; margin-bottom: 6px; font-size: 13px; }
 .legend-subtitle { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
 .legend-item { display: flex; align-items: center; margin-bottom: 4px; font-size: 13px; }
-/* .legend-color { width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; border: 1px solid #555; } */
-/* default kotak */
-.legend-color { 
-  width: 14px; 
-  height: 14px; 
-  margin-right: 8px; 
-  border: 1px solid #555; 
-  border-radius: 2px; /* kotak */
-}
-
-/* khusus Penilaian Risiko */
-.legend-color.circle {
-  border-radius: 50%; /* bulat */
-}
+.legend-color { width: 14px; height: 14px; margin-right: 8px; border: 1px solid #555; border-radius: 2px; }
+.legend-color.circle { border-radius: 50%; }
 .legend-text { flex: 1; line-height: 1.2em; }
 .leaflet-control-layers { font-family: "Roboto Mono", monospace; font-size: 12px; }
 .leaflet-control-layers-overlays label { display: flex; align-items: flex-start; white-space: normal; line-height: 1.2em; }
@@ -45,22 +34,21 @@ hr.layer-separator { border: none; border-top: 1px solid #ccc; margin: 6px 0; }
 @media (max-width: 768px) { .legend { transform: scale(0.6); transform-origin: bottom left; } }
 @media (max-width: 768px) {
   .leaflet-control-layers {
-    font-size: 10px;       /* perkecil font */
-    padding: 2px 4px;      /* lebih rapat */
+    font-size: 10px;
+    padding: 2px 4px;
   }
   .leaflet-control-layers-overlays label {
-    font-size: 10px;       /* teks overlay lebih kecil */
+    font-size: 10px;
     line-height: 1.1em;
   }
   .leaflet-control-layers-overlays input[type="checkbox"] {
-    transform: scale(0.8); /* perkecil checkbox */
+    transform: scale(0.8);
     margin-top: 1px;
   }
   .leaflet-control-layers-label {
-    font-size: 10px;       /* juga perkecil label pemisah */
+    font-size: 10px;
   }
 }
-
 </style>
 </head>
 <body>
@@ -75,18 +63,23 @@ const MIN_START_ZOOM = 11;
 const map = L.map("map", { minZoom: 5, maxZoom: 20, gestureHandling: true, zoomSnap: 1, zoomDelta: 1 }).setView([-5.5, 105.3], 6);
 
 // Basemaps
-const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, noWrap: true });
-const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", noWrap: true }).addTo(map);
-
+const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19, noWrap: true }).addTo(map);
+const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", noWrap: true });
 const baseMaps = { "OSM Standar": osm, "Citra Satelit (Esri)": satellite };
 
 // Layer Groups
 const aoiGroup = L.layerGroup().addTo(map);
 const kebunGroup = L.layerGroup().addTo(map);
-const risikoGroup = L.layerGroup().addTo(map);
+
+// === Risiko dipisah per kategori ===
+const risikoRendahGroup = L.layerGroup();
+const risikoTinggiGroup = L.layerGroup();
+const risikoInfoGroup  = L.layerGroup();
+
 const gfc2020Group = L.layerGroup();
 const jrcTMFGroup = L.layerGroup();
 const gladGroup = L.layerGroup();
+const gladTreeGroup = L.layerGroup();
 const alertGroup = L.layerGroup();
 const kopiGroup = L.layerGroup();
 const simontiniGroup = L.layerGroup();
@@ -98,6 +91,9 @@ gfc2020Group.addLayer(gfc2020Layer);
 
 const gladLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/510793ad-e545-499a-9903-b40c066cc0ff/raster/timestamp/d8ecf7af-3ac2-4af2-b36f-34445f2c1217/tile/{z}/{x}/{y}?style=eac2ab85-41e1-4cb9-ab21-73b95da52c7d&token=epat_sjKBq4EdmRVDy8a6GwWe8hEYIbSwDlZbAFM3KiySpvt8PxzvYD4YsZUufBvYDqP4", { transparent: true, opacity: 0.6 });
 gladGroup.addLayer(gladLayer);
+
+const gladTreeLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/651f9a5a-ef4f-42d3-ab88-ce2f6c0328b2/raster/timestamp/8fc63ec4-6d3d-4ec0-981f-f1b9a89d8228/tile/{z}/{x}/{y}?style=31775b24-2f6f-4036-8031-10233f259c65&token=epat_TK2IUqud6S7iVucGoU9w9fea8M5O48sMBmUDzVUak5I9juVdt6ztFyl34Z7l1pew", { transparent: true, opacity: 0.6 });
+gladTreeGroup.addLayer(gladTreeLayer);
 
 const jrcTMFLayer = L.tileLayer("https://api.ellipsis-drive.com/v3/path/5f99cd31-7885-4ae2-8a76-547a43ca558a/raster/timestamp/2c608ad5-73a2-4af2-b36f-34445f2c1217/tile/{z}/{x}/{y}?style=77325c09-be36-4726-a1c4-91471d68d77f&token=epat_KJRJ1jgS47R4FdAVoaYHoAGg5icDFEtlXMzMJyxxWYGBPTaNrTB8rcDESnqL4S85", { transparent: true, opacity: 0.6 });
 jrcTMFGroup.addLayer(jrcTMFLayer);
@@ -117,41 +113,82 @@ const simontiniLayer = L.tileLayer.wms("https://aws.simontini.id/geoserver/wms",
 });
 simontiniGroup.addLayer(simontiniLayer);
 
-// Ambil data dari ArcGIS REST FeatureServer
-// const wdpaGroup.addLayer = L.esri.featureLayer({
-//       url: "https://services5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_v0/FeatureServer/1",
-//       style: { color: "darkred", weight: 1, fillOpacity: 0.2 }
-//     });
-
+// === WDPA pakai Esri FeatureLayer ===
+const wdpaLayer = L.esri.featureLayer({
+  url: "https://services5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_v0/FeatureServer/1",
+  style: { color: "darkred", weight: 1, fillColor: "darkred", fillOpacity: 0.2 }
+});
+wdpaGroup.addLayer(wdpaLayer);
 
 // Overlay Layers
 const overlayLayers = {
   "Area of Interest": aoiGroup,
   "Kebun Pemasok": kebunGroup,
-  "Penilaian Risiko": risikoGroup,
+  "Tutupan Pohon >10% (UMD GLAD 2024 v1.12)": gladTreeGroup,
   "Tutupan Hutan Global (GFC 2020 v2 EU JRC)": gfc2020Group,
-  "Deforestasi (TMF 2024 EU JRC)": jrcTMFGroup,
   "Kehilangan Tutupan Pohon (UMD GLAD 2024 v1.12)": gladGroup,
+  "Deforestasi (TMF 2024 EU JRC)": jrcTMFGroup,
   "Peringatan Gangguan Hutan (GFW 2025)": alertGroup,
   "Perkebunan Kopi (Fardinatri, et al)": kopiGroup,
   "Fungsi Kawasan Hutan (KLHK)": simontiniGroup,
-  "Protected Areas (WDPA)": wdpaGroup
+  "Protected Areas (WDPA)": wdpaGroup,
+  // === Penilaian Risiko (dipisah) ===
+  "Risiko Rendah": risikoRendahGroup,
+  "Risiko Tinggi": risikoTinggiGroup,
+  "Risiko Butuh Info Lanjutan": risikoInfoGroup
 };
 
 const layerControl = L.control.layers(baseMaps, overlayLayers, { collapsed: true }).addTo(map);
 
+// Separator dan pengelompokan label
 function ensureSeparators() {
   const control = document.querySelector('.leaflet-control-layers-overlays');
   if (!control) return;
-  const labels = Array.from(control.querySelectorAll('label'));
 
+  // Lapisan Utama
   if (!control.querySelector('.lapisan-utama')) {
-    const gfcLabel = labels.find(l => l.textContent.includes('Tutupan Hutan Global'));
-    if (gfcLabel) gfcLabel.insertAdjacentHTML('beforebegin', "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-utama'>Lapisan Utama</div>");
+    const gladTreeLabel = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Tutupan Pohon >10%'));
+    if (gladTreeLabel) {
+      gladTreeLabel.insertAdjacentHTML('beforebegin',
+        "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-utama'>Lapisan Utama</div>");
+    }
   }
+
+  // Lapisan Pendukung
   if (!control.querySelector('.lapisan-pendukung')) {
-    const kopiLabel = labels.find(l => l.textContent.includes('Perkebunan Kopi'));
-    if (kopiLabel) kopiLabel.insertAdjacentHTML('beforebegin', "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-pendukung'>Lapisan Pendukung</div>");
+    const kopiLabel = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Perkebunan Kopi'));
+    if (kopiLabel) {
+      kopiLabel.insertAdjacentHTML('beforebegin',
+        "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-pendukung'>Lapisan Pendukung</div>");
+    }
+  }
+
+  // Penilaian Risiko (label & garis setelah WDPA)
+  if (!control.querySelector('.lapisan-risiko')) {
+    const wdpaLabel = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Protected Areas (WDPA)'));
+    if (wdpaLabel) {
+      wdpaLabel.insertAdjacentHTML('afterend',
+        "<hr class='layer-separator'><div class='leaflet-control-layers-label lapisan-risiko'>Penilaian Risiko</div>");
+    }
+  }
+
+  // Urutkan Risiko: Rendah -> Tinggi -> Info
+  const target = control.querySelector('.lapisan-risiko');
+  if (target) {
+    const risikoRendah = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Risiko Rendah'));
+    const risikoTinggi = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Risiko Tinggi'));
+    const risikoInfo = Array.from(control.querySelectorAll('label'))
+      .find(l => l.textContent.includes('Risiko Butuh Info Lanjutan'));
+
+    // keluarkan lalu sisipkan ulang terbalik -> hasil akhir: Rendah, Tinggi, Info
+    [risikoInfo, risikoTinggi, risikoRendah].forEach(lbl => {
+      if (lbl) { lbl.remove(); target.insertAdjacentElement('afterend', lbl); }
+    });
   }
 }
 
@@ -169,13 +206,11 @@ legend.onAdd = () => {
     </div>
     <div class="legend-content"></div>
   `;
-
   div.querySelector(".legend-header").onclick = () => {
     div.classList.toggle("collapsed");
     const toggleBtn = div.querySelector(".legend-toggle");
     toggleBtn.textContent = div.classList.contains("collapsed") ? "[+]" : "[-]";
   };
-
   div.style.display = "none";
   return div;
 };
@@ -183,36 +218,32 @@ legend.addTo(map);
 
 function updateLegend() {
   const activeLayers = [];
+
   if (map.hasLayer(aoiGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: red; opacity:0.2;"></div><div class="legend-text">Area of Interest</div></div>');
   if (map.hasLayer(kebunGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: blue; opacity:0.6;"></div><div class="legend-text">Kebun Pemasok</div></div>');
-
-
+  if (map.hasLayer(gladTreeGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: darkgreen; opacity:0.6;"></div><div class="legend-text">Tutupan Pohon >10%</div></div>');
   if (map.hasLayer(gfc2020Group)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: green; opacity:0.6;"></div><div class="legend-text">Tutupan Hutan Global</div></div>');
-if (map.hasLayer(kopiGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: #6F4E37; opacity:0.6;"></div><div class="legend-text">Perkebunan Kopi Tanggamus</div></div>');
+  if (map.hasLayer(kopiGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: #6F4E37; opacity:0.6;"></div><div class="legend-text">Perkebunan Kopi Tanggamus</div></div>');
 
   if (map.hasLayer(jrcTMFGroup) || map.hasLayer(gladGroup)) {
-  let subtitle = "Deforestasi/Kehilangan Tutupan Pohon";
-  if (map.hasLayer(jrcTMFGroup) && !map.hasLayer(gladGroup)) {
-    subtitle = "Deforestasi (TMF)";
-  } else if (!map.hasLayer(jrcTMFGroup) && map.hasLayer(gladGroup)) {
-    subtitle = "Kehilangan Tutupan Pohon (GLAD)";
+    let subtitle = "Deforestasi/Kehilangan Tutupan Pohon";
+    if (map.hasLayer(jrcTMFGroup) && !map.hasLayer(gladGroup)) subtitle = "Deforestasi (TMF)";
+    else if (!map.hasLayer(jrcTMFGroup) && map.hasLayer(gladGroup)) subtitle = "Kehilangan Tutupan Pohon (GLAD)";
+
+    activeLayers.push(`
+      <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
+        <div class="legend-subtitle">${subtitle}</div>
+        <div class="legend-item"><div class="legend-color" style="background:#AA0000;"></div><div class="legend-text">2024</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FF0000;"></div><div class="legend-text">2023</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FF5353;"></div><div class="legend-text">2022</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FFA5A5;"></div><div class="legend-text">2021</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#FFCCCC;"></div><div class="legend-text">≤2020</div></div>
+      </div>
+    `);
   }
 
-  activeLayers.push(`
-    <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
-      <div class="legend-subtitle">${subtitle}</div>
-      <div class="legend-item"><div class="legend-color" style="background:#AA0000;"></div><div class="legend-text">2024</div></div>
-      <div class="legend-item"><div class="legend-color" style="background:#FF0000;"></div><div class="legend-text">2023</div></div>
-      <div class="legend-item"><div class="legend-color" style="background:#FF5353;"></div><div class="legend-text">2022</div></div>
-      <div class="legend-item"><div class="legend-color" style="background:#FFA5A5;"></div><div class="legend-text">2021</div></div>
-      <div class="legend-item"><div class="legend-color" style="background:#FFCCCC;"></div><div class="legend-text">≤2020</div></div>
-    </div>
-  `);
-}
-
-
   if (map.hasLayer(alertGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: black; opacity:1;"></div><div class="legend-text">Peringatan Gangguan Hutan (GFW)</div></div>');
-  
+
   if (map.hasLayer(simontiniGroup)) {
     activeLayers.push(`
       <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
@@ -228,16 +259,22 @@ if (map.hasLayer(kopiGroup)) activeLayers.push('<div class="legend-item"><div cl
 
   if (map.hasLayer(wdpaGroup)) activeLayers.push('<div class="legend-item"><div class="legend-color" style="background: darkred; opacity:0.4;"></div><div class="legend-text">Protected Areas (WDPA)</div></div>');
 
-  if (map.hasLayer(risikoGroup)) {
-  activeLayers.push(`
-    <div class="legend-item" style="flex-direction: column; align-items: flex-start;">
-      <div class="legend-subtitle">Penilaian Risiko</div>
-      <div class="legend-item"><div class="legend-color circle" style="background:#007bff;"></div><div class="legend-text">Rendah</div></div>
-      <div class="legend-item"><div class="legend-color circle" style="background:#dc3545;"></div><div class="legend-text">Tinggi</div></div>
-      <div class="legend-item"><div class="legend-color circle" style="background: grey;"></div><div class="legend-text">Butuh Informasi Lanjutan</div></div>
-    </div>
-  `);
-}
+  // Penilaian Risiko (dinamis per kategori aktif)
+  if (map.hasLayer(risikoRendahGroup) || map.hasLayer(risikoTinggiGroup) || map.hasLayer(risikoInfoGroup)) {
+    let risikoHTML = `<div class="legend-item" style="flex-direction: column; align-items: flex-start;">
+        <div class="legend-subtitle">Penilaian Risiko</div>`;
+    if (map.hasLayer(risikoRendahGroup)) {
+      risikoHTML += `<div class="legend-item"><div class="legend-color circle" style="background:#007bff;"></div><div class="legend-text">Rendah</div></div>`;
+    }
+    if (map.hasLayer(risikoTinggiGroup)) {
+      risikoHTML += `<div class="legend-item"><div class="legend-color circle" style="background:#dc3545;"></div><div class="legend-text">Tinggi</div></div>`;
+    }
+    if (map.hasLayer(risikoInfoGroup)) {
+      risikoHTML += `<div class="legend-item"><div class="legend-color circle" style="background:grey;"></div><div class="legend-text">Butuh Informasi Lanjutan</div></div>`;
+    }
+    risikoHTML += `</div>`;
+    activeLayers.push(risikoHTML);
+  }
 
   const div = document.querySelector(".legend");
   if (!div) return;
@@ -276,66 +313,43 @@ fetch("https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Val
   updateLegend();
 });
 
-
-// === WDPA pakai Esri FeatureLayer ===
-const wdpaLayer = L.esri.featureLayer({
-url: "https://services5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_v0/FeatureServer/1",
-style: {
-color: "darkred",
-weight: 1,
-fillColor: "darkred",
-fillOpacity: 0.2
-}
-});
-wdpaGroup.clearLayers().addLayer(wdpaLayer);
-// panggil update legend saat overlay berubah
-map.on("overlayadd", updateLegend);
-map.on("overlayremove", updateLegend);
-
-
-
+// Data Risiko (split per kategori)
 function risikoStyle(risiko) {
-  if (!risiko) return {};
+  if (!risiko) return { radius: 7, fillColor: "#007bff", color: "#fff", weight: 1, opacity: 1, fillOpacity: 0.9 };
   const r = risiko.toString().trim().toLowerCase();
-  let color = "#007bff"; // default Rendah
+  let color = "#007bff"; // Rendah (default)
   if (r === "tinggi" || r === "high") color = "#dc3545";
   else if (r === "butuh informasi lanjutan" || r === "info") color = "grey";
-
-  return {
-    radius: 7,
-    fillColor: color,
-    color: "#fff",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.9
-  };
+  return { radius: 7, fillColor: color, color: "#fff", weight: 1, opacity: 1, fillOpacity: 0.9 };
 }
-
-
 
 fetch("https://raw.githubusercontent.com/RUMAH-PETAni/ekspor_am/main/Geodata_Risk.geojson")
   .then(res => res.json())
   .then(data => {
-    const layer = L.geoJSON(data, {
+    L.geoJSON(data, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, risikoStyle(feature.properties.RISIKO));
       },
       onEachFeature: function (feature, lyr) {
-        const p = feature.properties || {};
-        if (p.RISIKO) {
-          lyr.bindPopup(`<b>Penilaian Risiko:</b> ${p.RISIKO}`);
+        const r = (feature.properties?.RISIKO || "").toLowerCase();
+        lyr.bindPopup(`<b>Penilaian Risiko:</b> ${feature.properties?.RISIKO ?? "-"}`);
+        if (r.includes("rendah") || r === "low") {
+          risikoRendahGroup.addLayer(lyr);
+        } else if (r.includes("tinggi") || r === "high") {
+          risikoTinggiGroup.addLayer(lyr);
+        } else {
+          risikoInfoGroup.addLayer(lyr);
         }
       }
     });
-    risikoGroup.clearLayers().addLayer(layer);
     updateLegend();
   });
 
-// Update legend on overlay add/remove
+// Kendali legend saat overlay berubah
 map.on("overlayadd", updateLegend);
 map.on("overlayremove", updateLegend);
 
-// Initial call
+// Inisialisasi legend
 updateLegend();
 </script>
 </body>
