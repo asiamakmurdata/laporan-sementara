@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Penilaian Risiko · Pohon Keputusan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; margin: 0; overflow-y: hidden;}
+    body { font-family: 'Roboto Mono', monospace; background: #fff; }
+    header { background: lightgrey; padding: 8px 20px; font-family: 'Roboto Mono', monospace; position: relative; }
+    .tree-container { width: 100%; height: calc(100% - 58px); font-family: 'Roboto Mono', monospace;   }
+    .link { fill: none; stroke: #555; stroke-opacity: 0.4; stroke-width: 1.5px; }
+    .node circle { cursor: pointer; }
+    .node text { font: 12px 'Roboto Mono', monospace; dominant-baseline: middle; }
+    .subtitle { font-size: 12px; color: #666; margin: 0; position: absolute; top: 36px; right: 20px; }
+    svg { width: 100%; height: 100%; display: block; }
+  </style>
+</head>
+<body>
+  <!-- <header>
+    <p style="font-size:0.8em; line-height:1.4; text-align: left;">Pohon Keputusan: Penilaian Risiko Deforestasi</p>
+
+  </header> -->
+   <p style="font-size:0.8em; line-height:1.4; text-align: left; padding: 0px 20px">Pohon Keputusan: Penilaian Risiko</p>
+
+  <div class="tree-container">
+    <svg id="tree"></svg>
+  </div>
+   <p style="font-size:0.6em; line-height:1.4; text-align: left; padding: 0px 20px; margin-top: -10px;">klik untuk memperluas</p>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+const data = {
+  name: "Geodata",
+  children: [
+     { 
+      name: "Drop (Recheck Data)",
+    },
+   
+    { 
+      name: "Valid",
+      children: [
+       
+        { 
+          name: "Tutupan Pohon >10%",
+          children: [
+            { 
+              name: "Tidak (Risiko Rendah)",
+            },
+            { 
+              name: "Ya",
+              children: [
+                 { name: "Ya (Risiko Rendah)" },
+                { 
+                  name: "Komoditas 2020", 
+                  children: [
+                    { name: "Deforestasi ≤2020 (Risiko Rendah)" },
+                    { name: "Tidak", children: [
+                        { name: "Deforestasi >2020", children: [
+                            { name: "Ya (Risiko Tinggi)" },
+                            { name: "Tidak (Perlu Info Lanjutan)" }
+                        ]},
+                        
+                    ]},
+                   
+                  ]
+                }
+              ]
+            },
+            
+          ]
+        }
+      ]
+    },
+     
+  ]
+};
+
+
+    const svg = d3.select("#tree");
+    const g = svg.append("g").attr("transform", "translate(50,50)");
+
+    const root = d3.hierarchy(data);
+    root.x0 = 0;
+    root.y0 = 0;
+    if (root.children) root.children.forEach(collapse);
+
+    let i = 0;
+    let treeLayout, diagonal;
+    let isMobile = false;
+
+    function collapse(d) {
+      if (d.children) {
+        d._children = d.children;
+        d._children.forEach(collapse);
+        d.children = null;
+      }
+    }
+
+    function wrap(text, width) {
+      text.each(function() {
+        var text = d3.select(this),
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            y = text.attr("y") || 0,
+            dy = parseFloat(text.attr("dy")) || 0;
+        let tspan = text.text(null)
+          .append("tspan")
+          .attr("x", text.attr("x"))
+          .attr("y", y)
+          .attr("dy", dy + "em");
+
+        while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan")
+              .attr("x", text.attr("x"))
+              .attr("y", y)
+              .attr("dy", ++lineNumber * lineHeight + dy + "em")
+              .text(word);
+          }
+        }
+      });
+    }
+
+    function update(source) {
+      const width = document.querySelector(".tree-container").clientWidth;
+      const height = document.querySelector(".tree-container").clientHeight;
+
+      isMobile = width < 600;
+
+      let treeData, nodes, links, transformFn;
+
+      if (isMobile) {
+        // layout vertikal (HP)
+        treeLayout = d3.tree().size([width - 40, height - 100]);
+        diagonal = d3.linkVertical().x(d => d.x).y(d => d.y);
+        treeData = treeLayout(root);
+        nodes = treeData.descendants();
+        links = treeData.links();
+        nodes.forEach(d => d.y = d.depth * 35);
+        transformFn = d => `translate(${d.x},${d.y})`;
+      } else {
+        // layout horizontal (Desktop)
+        treeLayout = d3.tree().size([height - 40, width - 90]);
+        diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
+        treeData = treeLayout(root);
+        nodes = treeData.descendants();
+        links = treeData.links();
+        nodes.forEach(d => d.y = d.depth * 100); // ubah panjang node jadi 120
+        transformFn = d => `translate(${d.y},${d.x})`;
+      }
+
+      // ---- render ----
+      const node = g.selectAll('g.node')
+        .data(nodes, d => d.id || (d.id = ++i));
+
+      const nodeEnter = node.enter().append('g')
+        .attr('class', 'node')
+        .attr("transform", d => `translate(${source.y0},${source.x0})`)
+        .on('click', (event, d) => {
+          if (d.children) {
+            d._children = d.children;
+            d.children = null;
+          } else {
+            d.children = d._children;
+            d._children = null;
+          }
+          update(d);
+        });
+
+      nodeEnter.append('circle')
+        .attr('r', 6)
+        .style("fill", d => d._children ? "#000" : "#ccc");
+
+      nodeEnter.append('text')
+        .attr('dy', isMobile ? 1.5 : 0.3)          
+        .attr('x', isMobile ? 0 : 10)              
+        .attr('text-anchor', isMobile ? 'middle' : 'start')
+            .style('font-size', isMobile ? '8px' : '10px')   <!-- font lebih kecil di HP -->
+        .text(d => d.data.name)
+        .call(wrap, isMobile ? 50 : 100);  // wrap juga untuk desktop
+
+      const nodeUpdate = nodeEnter.merge(node);
+
+      nodeUpdate.transition()
+        .duration(500)
+        .attr("transform", transformFn);
+
+      nodeUpdate.select('circle')
+        .attr('r', 6)
+        .style("fill", d => d._children ? "#000" : "#ccc");
+
+      node.exit().transition()
+        .duration(500)
+        .attr("transform", transformFn(source))
+        .remove();
+
+      const link = g.selectAll('path.link')
+        .data(links, d => d.target.id);
+
+      link.enter().insert('path', "g")
+        .attr("class", "link")
+        .attr("d", d => {
+          const o = {x: source.x0, y: source.y0};
+          return diagonal({source: o, target: o});
+        })
+        .merge(link)
+        .transition()
+        .duration(500)
+        .attr("d", diagonal);
+
+      link.exit().transition()
+        .duration(500)
+        .attr("d", d => {
+          const o = {x: source.x, y: source.y};
+          return diagonal({source: o, target: o});
+        })
+        .remove();
+
+      nodes.forEach(d => {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
+    }
+
+    update(root);
+    window.addEventListener("resize", () => update(root));
+  </script>
+</body>
+</html>
