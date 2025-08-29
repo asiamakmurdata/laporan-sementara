@@ -33,6 +33,23 @@
     @media (max-width: 600px) {
       .chart-container{max-width:300px}
     }
+    @media (max-width: 600px) {
+  .header {
+    flex-direction: column; /* tumpuk ke bawah */
+    align-items: flex-start; /* rata kiri */
+  }
+
+  .header h1 {
+    margin-bottom: 6px; /* beri jarak ke dropdown */
+    font-size: 0.9em; /* bisa sedikit diperbesar di HP */
+  }
+
+  .header select {
+    width: auto;              /* ukuran sama seperti default */
+    max-width: none;          /* biar tidak ada batasan */
+  }
+}
+
   </style>
 </head>
 <body>
