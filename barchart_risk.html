@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Chart.js - Risiko Deforestasi</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      font-family:'Roboto Mono', monospace;
+      background:#fff; color:#222;
+      overflow:hidden; /* hilangkan scroll */
+    }
+    * { font-family: 'Roboto Mono', monospace !important; }
+    .wrap { width:100%; height:100%; display:flex; flex-direction:column; }
+    .controls { text-align:center; padding:8px; }
+   h1{font-size:14px;font-weight:normal;margin:0 0 6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;text-align:center}
+     .chart-container {
+      flex:1; position:relative; width:100%; height:100%;
+    }
+    canvas {
+      width:100% !important; height:100% !important;
+    }
+
+  .chart-container{
+    height:90% !important;
+  }
+     /* Versi desktop: perbesar sedikit */
+    @media (max-width: 600px) {
+     
+      .chart-container{max-width:300px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="controls">
+    <h1>Risiko Deforestasi per Group</h1>
+  </div>
+  <div class="chart-container">
+    <canvas id="deforestasiChart"></canvas>
+  </div>
+</div>
+
+<script>
+const labels = ["Hutan Lestari", "Tunas Jaya", "Simpang Bayur", "Lestari Sejahtera"];
+
+function buildData() {
+  return {
+    labels: labels,
+    datasets: [
+      { label:"Rendah", data:[61, 521, 86, 278], backgroundColor:"#007bff" },
+      { label:"Tinggi", data:[1, 0, 0, 7], backgroundColor:"#dc3545" },
+      { label:"Butuh Informasi Lanjutan", data:[9, 79, 35, 165], backgroundColor:"darkgray" }
+    ]
+  };
+}
+
+let chart = new Chart(document.getElementById("deforestasiChart"), {
+  type:"bar",
+  data: buildData(),
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{ position:"bottom", labels:{ font:{family:"Roboto Mono"} } },
+      tooltip:{ bodyFont:{family:"Roboto Mono"}, titleFont:{family:"Roboto Mono"} },
+      datalabels:{
+        anchor:"end", align:"end", font:{family:"Roboto Mono",size:11},
+        formatter:(value)=> value
+      }
+    },
+    scales:{
+      y:{
+        title:{ display:true, text:"Jumlah", font:{ family:"Roboto Mono" } },
+        ticks:{ font:{ family:"Roboto Mono" } }
+      },
+      x:{
+        title:{ display:true, text:"Group", font:{ family:"Roboto Mono" } },
+        ticks:{ font:{ family:"Roboto Mono" } }
+      }
+    }
+  },
+  plugins:[ChartDataLabels]
+});
+</script>
+</body>
+</html>
