@@ -6,10 +6,13 @@
   <title>Penilaian Risiko · Pohon Keputusan</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
   <style>
-    html, body { height: 100%; margin: 0; overflow-y: hidden;}
-    body { font-family: 'Roboto Mono', monospace; background: #fff; }
-    header { background: lightgrey; padding: 8px 20px; font-family: 'Roboto Mono', monospace; position: relative; }
-    .tree-container { width: 100%; height: calc(100% - 50px); font-family: 'Roboto Mono', monospace;   }
+       html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      font-family:'Roboto Mono', monospace;
+      background:#fff; color:#222;
+      overflow:hidden; /* hilangkan scroll */
+    }
+    .tree-container { width: 100%; height:100%; font-family: 'Roboto Mono', monospace;   }
     .link { fill: none; stroke: #555; stroke-opacity: 0.4; stroke-width: 1.5px; }
     .node circle { cursor: pointer; }
     .node text { font: 12px 'Roboto Mono', monospace; dominant-baseline: middle; }
@@ -18,12 +21,8 @@
   </style>
 </head>
 <body>
-  <!-- <header>
-    <p style="font-size:0.8em; line-height:1.4; text-align: left;">Pohon Keputusan: Penilaian Risiko Deforestasi</p>
-
-  </header> -->
-   <p style="font-size:0.8em; line-height:1.4; text-align: left; padding: 0px 20px">Pohon Keputusan: Penilaian Risiko</p>
-  <p style="font-size:0.6em; line-height:1.4; text-align: left; padding: 0px 20px;">klik untuk memperluas</p>
+   <p style="font-size:0.8em; line-height:1.4; text-align: left; padding: 0px 8px">Pohon Keputusan: Penilaian Risiko</p>
+  <p style="font-size:0.6em; line-height:1.4; text-align: left; padding: 0px 8px;">klik untuk memperluas</p>
   <div class="tree-container">
     <svg id="tree"></svg>
   </div>
