@@ -9,6 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 
   <!-- GestureHandling Plugin -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css">
@@ -85,17 +87,18 @@
         <div class="col-md-3">
           <div class="card small-card">
             <h5>Group</h5>
-            <select id="groupSelect" class="form-select form-select-sm">
-              <option value="all">All</option>
-              <option value="A">Group A</option>
-              <option value="B">Group B</option>
-            </select>
+            <select id="groupSelect">
+  <option value="">Pilih Grup</option>
+</select>
+
+
+
           </div>
           <div class="card small-card">
             <h5>ID Kebun</h5>
-            <select id="plotSelect" class="form-select form-select-sm">
-              <option value="all">All</option>
-            </select>
+         <select id="plotSelect">
+  <option value="">Pilih ID Kebun</option>
+</select>
           </div>
           <div id="map-card" class="card d-flex flex-column">
             <h5>Lokasi Plot</h5>
@@ -241,6 +244,95 @@ function makeChart(ctx, label) {
       document.getElementById("info-luas").textContent="Luas:";
       document.getElementById("info-koordinat").textContent="Koordinat:";
     });
-  </script>
+
+  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTK9cOmEW7afpd6n-UkxA8yVNyH2sYgpWTtt_s-pObhJM2xzohroV7rnSCJW4yEyzKzlXzOCI_4pEIT/pub?gid=0&single=true&output=csv";
+
+  Papa.parse(csvUrl, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      console.log("Data Sheet Loaded:", results.data);
+      initFromData(results.data);
+    },
+    error: function(err, file, inputElem, reason) {
+      console.error("Failed to load CSV:", reason);
+    }
+  });
+
+function initFromData(data) {
+  const groupSelect = document.getElementById("groupSelect");
+  const plotSelect = document.getElementById("plotSelect");
+
+  // isi dropdown Group
+  groupSelect.innerHTML = '<option value="all">All</option>';
+  const groups = [...new Set(data.map(r => r.Group))];
+  groups.forEach(g => {
+    const opt = document.createElement("option");
+    opt.value = g;
+    opt.textContent = g;
+    groupSelect.appendChild(opt);
+  });
+
+  // isi dropdown ID Kebun awal
+  updatePlotDropdown(data);
+
+  // === event listener Group ===
+  groupSelect.addEventListener("change", () => {
+    const selectedGroup = groupSelect.value;
+    let filtered = data;
+
+    if (selectedGroup !== "all") {
+      filtered = data.filter(r => r.Group === selectedGroup);
+    }
+
+    // update dropdown ID Kebun
+    updatePlotDropdown(filtered);
+
+    // update card info jumlah plot
+    document.getElementById("info-id").textContent = "Jumlah Plot: " + filtered.length;
+    document.getElementById("info-nama").textContent = "Nama:";
+    document.getElementById("info-luas").textContent = "Luas:";
+    document.getElementById("info-koordinat").textContent = "Koordinat:";
+
+    // reset marker kalau ganti group
+    if (marker) { map.removeLayer(marker); marker = null; }
+    map.setView([-2.5, 118], 5); // kembali ke posisi default
+  });
+
+  // === event listener ID Kebun ===
+  plotSelect.addEventListener("change", () => {
+    const selectedID = plotSelect.value;
+    if (selectedID !== "all") {
+      const info = data.find(r => r.ID_Kebun === selectedID);
+      if (info) {
+        document.getElementById("info-id").textContent = "ID Kebun: " + info.ID_Kebun;
+        document.getElementById("info-nama").textContent = "Nama: " + info.Nama;
+        document.getElementById("info-luas").textContent = "Luas: " + info.Luas_Kebun;
+        document.getElementById("info-koordinat").textContent = `Koordinat: ${info.Latitude}, ${info.Longitude}`;
+
+        // update marker di peta
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([info.Latitude, info.Longitude]).addTo(map);
+        map.setView([info.Latitude, info.Longitude], 13);
+      }
+    }
+  });
+}
+
+function updatePlotDropdown(filtered) {
+  const plotSelect = document.getElementById("plotSelect");
+  plotSelect.innerHTML = '<option value="all">All</option>';
+
+  filtered.forEach(r => {
+    const opt = document.createElement("option");
+    opt.value = r.ID_Kebun;
+    opt.textContent = r.ID_Kebun;
+    plotSelect.appendChild(opt);
+  });
+}
+
+
+</script>
+
 </body>
 </html>
