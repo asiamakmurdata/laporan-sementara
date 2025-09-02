@@ -227,7 +227,7 @@ function makeChart(ctx, label) {
     const pieChart=new Chart(document.getElementById('riskPie'),{
       type:'pie',
       data:{labels:['Rendah','Tinggi',labelButuh],
-        datasets:[{data:[76,1,23],backgroundColor:['#007bff','#dc3545','darkgray']}]},
+        datasets:[{data:[0.76,0.01,0.23],backgroundColor:['#007bff','#dc3545','darkgray']}]},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{position:legendPosition,labels:{font:{size:10,family:'Roboto Mono'}}},
           datalabels:{color:'#fff',font:{size:10,family:'Roboto Mono'}}}},
@@ -236,7 +236,7 @@ function makeChart(ctx, label) {
 
     document.getElementById('resetBtn').addEventListener('click',()=>{
       map.setView([-2.5,118],5); if(marker){map.removeLayer(marker); marker=null;}
-      pieChart.data.datasets[0].data=[30,45,25]; pieChart.update();
+      pieChart.data.datasets[0].data=[0.76,0.01,0.23]; pieChart.update();
       document.getElementById('groupSelect').value="all";
       document.getElementById('plotSelect').value="all";
       document.getElementById("info-id").textContent="ID Kebun:";
